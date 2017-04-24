@@ -19,7 +19,7 @@ var total_questions_answered = 0;
 // - By pinging it every 30 minutes, it will never sleep and the IP address will never
 //   change to a blacklisted one
 setInterval(function() {
-    http.get("http://peaceful-caverns-10612.herokuapp.com");
+    http.get("http://rocky-inlet-35580.herokuapp.com");
 }, 1800000); // 30 minutes
 
 var questions = [];
