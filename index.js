@@ -314,6 +314,9 @@ function messageIsInappropriate(text) {
 		return true;
 	}
 	text = text.toLowerCase();
+	if(text.includes("@") && (text.includes("gmail") || text.includes("@hotmail") || text.includes("@yahoo") || text.includes(".edu"))) {
+		return true;
+	}
 	// Detect user errors
 	if(text == "answer" || text == "answr" || text == "ask" || text == "aswer" || text == "skip" || text == "pass") {
 		return true;
