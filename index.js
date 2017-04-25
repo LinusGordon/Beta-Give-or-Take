@@ -169,7 +169,7 @@ function promptUser(sender, users) {
 function giveUserQuestion(sender, users, questions) {
 	// If there are no questions waiting to be answered
 	if(!questions[0]) {
-		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Answer.", true);
+		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Ask.", true);
 	} else { // If there is a question 
 		var index;
 		for(index = 0; index < questions.length; index++) {
@@ -178,7 +178,7 @@ function giveUserQuestion(sender, users, questions) {
 			} 
 		}
 		if (questions[index] == null || questions[index].question == null) {
-	 		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Answer.", true);
+	 		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Ask.", true);
 		} else {
 			var question = questions[index].question;
 			users[sender].state = "answering";
@@ -196,7 +196,7 @@ function userAnswering(sender, users, questions, original_message) {
 	total_questions_answered++;
 	
 	if(messageIsInappropriate(original_message)) {
-		sendTextMessage(sender, "Hmm... There was something wrong with your answer \n\n Select answer to try again", true);
+		sendTextMessage(sender, "Hmm... There was something wrong with your answer \n\n Let's try that again", true);
 		setPrompt(sender, users);
 		return;
 	}
