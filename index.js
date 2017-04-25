@@ -223,7 +223,7 @@ function userAnswering(sender, users, questions, original_message) {
 		questions[index].completed = true;
 	}
 
-	promptUser(sender, users);
+	sendTextMessage(sender, "Thanks, I will send your answer to the asker. \n\nIn the meantime, do you want to ask or answer another question?", true);
 
 	var popped_question = questions.splice(index, 1); // Remove question from the array
 	popped_question[0].answerer = null;
@@ -293,7 +293,7 @@ function messageIsInappropriate(text) {
 	}
 	text = text.toLowerCase();
 	// Detect user errors
-	if(text == "answer" || text == "answr" || text == "ask" || text == "aswer") {
+	if(text == "answer" || text == "answr" || text == "ask" || text == "aswer" || text == "skip" || text == "pass") {
 		return true;
 	}
 	// User is trying to send a phone number if true
