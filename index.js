@@ -74,13 +74,13 @@ app.post('/webhook/', function (req, res) {
 	   		handlePostbacks(event.postback.payload, sender);
 	   	}
 
-	   	if(event.message && event.message.quick_reply) {
-	    	if (event.message.quick_reply.payload == "ASK_PAYLOAD") {
-				userWantsToAsk(sender, users);
-		   	} else if (event.message.quick_reply.payload == "ANSWER_PAYLOAD") {
-		    	giveUserQuestion(sender, users, questions)
-		    } 
-	    }
+	   // 	if(event.message && event.message.quick_reply) {
+	   //  	if (event.message.quick_reply.payload == "ASK_PAYLOAD") {
+				// userWantsToAsk(sender, users);
+		  //  	} else if (event.message.quick_reply.payload == "ANSWER_PAYLOAD") {
+		  //   	giveUserQuestion(sender, users, questions)
+		  //   } 
+	   //  }
     	
     	// Find the current user
 	    found = sender in users;
@@ -90,7 +90,7 @@ app.post('/webhook/', function (req, res) {
 	    	promptUser(sender, users);
 	    }
 	    
-	    if(event.message && event.message.text && !event.message.quick_reply && found) {
+	    if(event.message && event.message.text && found) {
 	  
 			usageInfo();
 
@@ -100,7 +100,10 @@ app.post('/webhook/', function (req, res) {
  	    		    	
 
 	    	// User has requested to answer a question and is now answering
-	    	if (user_state == "answering") {
+	    	if(user_state == "promped" && text != "ask" && text != "answer") {
+	    		promptUser(sender, users);
+	    	}
+	    	else if (user_state == "answering") {
 	    		userAnswering(sender, users, questions, original_message);
 	    	}  
 	    	// User has requested to ask a question and is now asking
