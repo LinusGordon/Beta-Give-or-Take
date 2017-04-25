@@ -183,7 +183,7 @@ function giveUserQuestion(sender, users, questions) {
 			users[sender].state = "answering";
 			questions[index].answerer = sender;
 			console.log("THE QUESTION IS" + question);
-			sendTextMessage(sender, "Please answer the following question: \n\n" + question);
+			sendTextMessage(sender, "Please select Ask to ask a question or \n Answer the following question: \n\n" + question);
 		}
 	}
 }
@@ -221,8 +221,6 @@ function userAnswering(sender, users, questions, original_message) {
 		sendTextMessage(questions[index].asker, "You asked: " + questions[index].question + "\n \nThe answer is: " + original_message);
 		questions[index].completed = true;
 	}
-	// Confirm that your answer was sent.
-	sendTextMessage(sender, "I just sent your answer to the asker. Thanks!");
 
 	var popped_question = questions.splice(index, 1); // Remove question from the array
 	popped_question[0].answerer = null;
