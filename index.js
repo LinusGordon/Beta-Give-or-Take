@@ -183,6 +183,7 @@ function giveUserQuestion(sender, users, questions) {
 			var question = questions[index].question;
 			users[sender].state = "answering";
 			questions[index].answerer = sender;
+			console.log("THE QUESTION IS" + question);
 			sendTextMessage(sender, "Please answer the following question: \n\n" + question);
 		}
 	}
@@ -255,7 +256,7 @@ function userAsking(sender, users, questions, original_message) {
 	}
 	
 	questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
-	sendTextMessage(sender, "Thanks, I will get back to you shortly. \n \n Ask another question, or select Answer to answer a question ");
+	sendTextMessage(sender, "Thanks, I will get back to you shortly. \n \nAsk another question, or select Answer to answer a question ");
 }
 
 function setPrompt(sender, users) {
