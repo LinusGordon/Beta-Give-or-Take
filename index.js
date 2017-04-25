@@ -190,7 +190,7 @@ function giveUserQuestion(sender, users, questions) {
 			users[sender].state = "answering";
 			questions[index].answerer = sender;
 			console.log("THE QUESTION IS" + question);
-			sendTextMessage(sender, "Select 'Ask' to ask a question or... \nAnswer the following question: \n\n" + question);
+			sendTextMessage(sender, "Please answer the following question or select Ask to ask a question.\n\n" + question);
 		}
 	}
 }
