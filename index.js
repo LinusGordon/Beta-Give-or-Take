@@ -8,7 +8,7 @@ const request = require('request');
 const app = express();
 const token = process.env.token;
 var http = require("http");
-var total_usage = 0; 
+var total_sent_received = 0; 
 var total_users = 169; // This is the number of users from my last version
 var total_questions_asked = 0;
 var total_questions_answered = 0;
@@ -71,7 +71,7 @@ app.post('/webhook/', function (req, res) {
     	
     	let event = req.body.entry[0].messaging[i];
 	    let sender = event.sender.id;
-
+	    total_sent_received++;
 	    found = sender in users;
 	    if(!found) {
 	    	total_users++;
@@ -134,6 +134,7 @@ app.post('/webhook/', function (req, res) {
 });
 
 function sendTextMessage(sender, text, quick_reply) {
+	total_sent_received++;
 	var messageData;
 	
 	if(quick_reply) {
@@ -340,7 +341,7 @@ function handlePostbacks(payload, sender) {
 	} else if(payload == "ABOUT_PAYLOAD") {
 		sendTextMessage(sender, "Give or Take was developed by Linus Gordon starting April 19, 2017. The bot has been featured on the front page of Botlist, Qwazou, and more.\n\nFor questions, comments, or feedback, please post on http://www.facebook.com/GiveOrTakeChatbot", false);
 	} else if(payload == "STATS_PAYLOAD") {
-		sendTextMessage(sender, "The current version of Give or Take has:\n" + total_users + " users\n" + total_questions_asked + " Questions Asked\n" + total_questions_answered + " Answers Provided\n", false);
+		sendTextMessage(sender, "The current version of Give or Take has:\n" + total_users + " users\n" + total_questions_asked + " Questions Asked\n" + total_questions_answered + " Answers Provided\n" + total_sent_received + " Messages Sent and Received", false);
 	} else if(payload == "HELP_PAYLOAD") {
 		sendTextMessage(sender, "Give or Take allows you to ask to ask and answer unfiltered questions with anyone on Facebook.\nIf you ask a question, I will reply with another user's answer. \nYou can also choose to answer other user's questions.", false);
 	}
