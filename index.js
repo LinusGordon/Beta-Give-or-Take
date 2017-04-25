@@ -300,7 +300,7 @@ function messageIsInappropriate(text) {
 	// User is trying to send a phone number if true
 	// This regex was found on http://stackoverflow.com/questions/16699007/regular-expression-to-match-standard-10-digit-phone-number
 	re = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
-	if(re.test(text)) {
+	if(text.match(re)) {
 		return true;
 	}
 	return false;
