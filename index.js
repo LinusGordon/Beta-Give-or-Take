@@ -306,4 +306,4 @@ function messageIsInappropriate(text) {
 			return true;
 		}
 	return false;
-}
+} 
