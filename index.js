@@ -301,8 +301,12 @@ function messageIsInappropriate(text) {
 	// This regex was found on http://stackoverflow.com/questions/16699007/regular-expression-to-match-standard-10-digit-phone-number
 	re = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
 	for(var i = 0; i < text.length; i++) {
-		var possiblePhoneNumber = text.substring(i, 12); // pull out 12 characters for a 10 digit number plus punctuation
-		if(re.test(possiblePhoneNumber)) {
+		var possiblePhoneNumber = text.substring(i, 10); // pull out 10 characters for a 10 digit number, no punctuation
+		var possiblePhoneNumber1 = text.substring(i, 11); // pull out 11 characters for a 10 digit number plus 1 punctuation
+		var possiblePhoneNumber2 = text.substring(i, 12); // pull out 12 characters for a 10 digit number plus 2 punctuation
+		var possiblePhoneNumber3 = text.substring(i, 13); // pull out 13 characters for a 10 digit number plus 3 punctuation
+
+		if(re.test(possiblePhoneNumber) || re.test(possiblePhoneNumber1) || re.test(possiblePhoneNumber2) || re.test(possiblePhoneNumber3) ||) {
 			return true;
 		}
 	}
