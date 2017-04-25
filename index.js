@@ -312,18 +312,4 @@ function handlePostbacks(payload, sender) {
 	    sendTextMessage(sender, "Welcome! I will help you ask and answer questions with anyone around the world. How does that sound? :)");
 	} 
 
-	if(payload == "MORE_INFO_PAYLOAD") {
-
-	}
-
-	if(sender in users) {
-		if (payload == "ASK_PAYLOAD") {
-	    	sendTextMessage(sender, "Please ask your question or select answer to answer a question.");
-	    	users[sender].state = "asking";
-	    } else if (payload == "ANSWER_PAYLOAD") {
-	    	giveUserQuestion(sender, users, questions)
-	    } 
-	}
-
-
 }
