@@ -76,8 +76,7 @@ app.post('/webhook/', function (req, res) {
 
 	   	if(event.message && event.message.quick_reply) {
 	    	if (event.message.quick_reply.payload == "ASK_PAYLOAD") {
-		    	sendTextMessage(sender, "Please ask your question or select answer to answer a question.");
-		    	users[sender].state = "asking";
+				userWantsToAsk(sender, users);
 		   	} else if (event.message.quick_reply.payload == "ANSWER_PAYLOAD") {
 		    	giveUserQuestion(sender, users, questions)
 		    } 
@@ -91,7 +90,7 @@ app.post('/webhook/', function (req, res) {
 	    	promptUser(sender, users);
 	    }
 	    
-	    if (event.message && event.message.text) {
+	    if (event.message && event.message.text && found) {
 	  
 			usageInfo();
 
@@ -99,42 +98,45 @@ app.post('/webhook/', function (req, res) {
 	    	original_message = sanitizeInput(text);
 	    	text = text.toLowerCase();
  	    		    	
+
 	    	// User has requested to answer a question and is now answering
-	    	if (found && user_state == "answering") {
+	    	if (user_state == "answering") {
 	    		userAnswering(sender, users, questions, original_message);
 	    	}  
 	    	// User has requested to ask a question and is now asking
-	    	else if (found && user_state == "asking") {
+	    	else if (user_state == "asking") {
 	    		userAsking(sender, users, questions, original_message);
 	    	} 
 	    	// User has typed 'ask' or some variation of that
-	    	// else if (found && text.includes("ask") && user_state == "prompted"){
-	    	// 	userWantsToAsk(sender, users);
-	    	// } 
-		    // If a user somehow gets here, treat them as new and ask them to ask or answer again
-		    // else if (found && text.includes("answer") && user_state == "prompted") {
-	    	// 	giveUserQuestion(sender, users, questions);
-	    	// } 
+	    	 else if (text.includes("ask") && user_state == "prompted"){
+	    	 	userWantsToAsk(sender, users);
+	    	} 
+	    	// User wants to answer
+		    else if (found && text.includes("answer") && user_state == "prompted") {
+	    		giveUserQuestion(sender, users, questions);
+	    	} 
 	    	else if(found) {
 	    		promptUser(sender, users);
 	    	}
-	    	else {
-		    	console.log("reached the end");
-		    }
 	    }
     }
     res.sendStatus(200)
 });
 
-function sendTextMessage(sender, text) {
-
-    let messageData = {  
-    					"text":text, 
-    					"quick_replies":[
-    							{"content_type":"text", "title": "Ask", "payload":"ASK_PAYLOAD"},
-				          		{"content_type":"text", "title":"Answer", "payload":"ANSWER_PAYLOAD"}
-				       		]
-						}
+function sendTextMessage(sender, text, quick_reply) {
+	var messageData;
+	
+	if(quick_reply) {
+	    messageData = {  
+	    					"text":text, 
+	    					"quick_replies":[
+	    							{"content_type":"text", "title": "Ask", "payload":"ASK_PAYLOAD"},
+					          		{"content_type":"text", "title":"Answer", "payload":"ANSWER_PAYLOAD"}
+					       		]
+							}
+	} else {
+		messageData = { "text":text};
+	}
     request({
 	    url: 'https://graph.facebook.com/v2.9/me/messages',
 	    qs: {access_token:token},
@@ -155,7 +157,7 @@ function sendTextMessage(sender, text) {
 // Asks user if they want to answer a question
 // Creates a new user
 function promptUser(sender, users) {
-	sendTextMessage(sender, "Do you want to ask or answer a question?");
+	sendTextMessage(sender, "Do you want to ask or answer a question?", true);
 	setPrompt(sender, users);
 	//users.push({person: sender, answerer: null, state: "prompted"});
 }
@@ -165,7 +167,7 @@ function promptUser(sender, users) {
 function giveUserQuestion(sender, users, questions) {
 	// If there are no questions waiting to be answered
 	if(!questions[0]) {
-		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Answer.");
+		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Answer.", true);
 	} else { // If there is a question 
 		var index;
 		for(index = 0; index < questions.length; index++) {
@@ -174,13 +176,12 @@ function giveUserQuestion(sender, users, questions) {
 			} 
 		}
 		if (questions[index] == null || questions[index].question == null) {
-	 		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Answer.");
+	 		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Answer.", true);
 		} else {
 			var question = questions[index].question;
 			users[sender].state = "answering";
 			questions[index].answerer = sender;
-			console.log("THE QUESTION IS" + question);
-			sendTextMessage(sender, "Please answer the following question or select Ask to ask a question.\n\n" + question);
+			sendTextMessage(sender, "Please answer the following question.\n\n" + question, false);
 		}
 	}
 }
@@ -192,7 +193,7 @@ function userAnswering(sender, users, questions, original_message) {
 	total_questions_answered++;
 	
 	if(messageIsInappropriate(original_message)) {
-		sendTextMessage(sender, "Hmm... There was something wrong with your answer \n\n Select answer to try again");
+		sendTextMessage(sender, "Hmm... There was something wrong with your answer \n\n Select answer to try again", true);
 		return;
 	}
 	
@@ -215,20 +216,20 @@ function userAnswering(sender, users, questions, original_message) {
 	// Send message to the asker with an answer
 	// It would equal null if it is a repeat question. 
 	if(questions[index] && questions[index].completed == false) {
-		sendTextMessage(questions[index].asker, "You asked: " + questions[index].question + "\n \nThe answer is: " + original_message);
+		sendTextMessage(questions[index].asker, "You asked: " + questions[index].question + "\n \nThe answer is: " + original_message, false);
+		promptUser(sender, users);
 		questions[index].completed = true;
 	}
 
 	var popped_question = questions.splice(index, 1); // Remove question from the array
 	popped_question[0].answerer = null;
 	questions.push(popped_question[0]);
-	giveUserQuestion(sender, users, questions);
 
 }
 
 // Handles when a user wants to ask a question
 function userWantsToAsk(sender, users) {
-	sendTextMessage(sender, "Please ask your question or select answer to answer a question.");
+	sendTextMessage(sender, "Please ask your question.", false);
 	users[sender].state = "asking";
 }
 
@@ -240,7 +241,7 @@ function userAsking(sender, users, questions, original_message) {
 	
 	// If a user tries to send a link, change the question to a harmless, common one
 	if(messageIsInappropriate(original_message)) {
-		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?");
+		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
 		return;
 	}
 	var cur_date = new Date();
@@ -250,7 +251,7 @@ function userAsking(sender, users, questions, original_message) {
 	}
 	
 	questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
-	sendTextMessage(sender, "Thanks, I will get back to you shortly. \n \nAsk another question, or select Answer to answer a question ");
+	sendTextMessage(sender, "Thanks, I will get back to you shortly. \n\nIn the meantime, do you want to ask or answer another question?", true);
 }
 
 function setPrompt(sender, users) {
@@ -302,7 +303,7 @@ function messageIsInappropriate(text) {
 function handlePostbacks(payload, sender) {
 	
 	if (payload == "GET_STARTED_PAYLOAD") {
-	    sendTextMessage(sender, "Welcome! I will help you ask and answer questions with anyone around the world. How does that sound? :)");
+	    sendTextMessage(sender, "Welcome! I will help you ask and answer questions with anyone around the world. How does that sound? :)", false);
 	} 
 
 }
