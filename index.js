@@ -62,8 +62,6 @@ app.listen(app.get('port'), function() {
 
 app.post('/webhook/', function (req, res) {
     let messaging_events = req.body.entry[0].messaging
-    var current_user;
-    var current_answerer;
     var text;
     var original_message;
     var found = false;
@@ -77,10 +75,9 @@ app.post('/webhook/', function (req, res) {
 	   	}
     	
     	// Find the current user
-	    current_user = users[sender]
 	    found = sender in users;
 	    if(found) {
-	    	user_state = current_user.state;
+	    	user_state = users[sender].state;
 	    } else {
 	    	promptUser(sender, users);
 	    }
@@ -102,10 +99,7 @@ app.post('/webhook/', function (req, res) {
 	    	text = event.message.text;
 	    	original_message = sanitizeInput(text);
 	    	text = text.toLowerCase();
- 
-	    	console.log("current user is: " + current_user);
-	    	console.log("Found: " + found);
-	    		    	
+ 	    		    	
 	    	// User has requested to answer a question and is now answering
 	    	if (found && user_state == "answering") {
 	    		userAnswering(sender, users, questions, original_message);
