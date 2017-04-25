@@ -283,7 +283,7 @@ function messageIsInappropriate(text) {
 	}
 	text = text.toLowerCase();
 	// Detect user errors
-	if(text == "answer" || text == "answr" || text == "ask" || text = "aswer") {
+	if(text == "answer" || text == "answr" || text == "ask" || text == "aswer") {
 		return true;
 	}
 	return false;
