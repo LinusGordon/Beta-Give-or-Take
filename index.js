@@ -247,16 +247,16 @@ function userAsking(sender, users, questions, original_message) {
 	
 	// Just for my curiousity
 	total_questions_asked++;
-
-	var cur_date = new Date();
 	
-	if (original_message.slice(-1) != '?') {
-		original_message = original_message + "?"; 
-	}
 	// If a user tries to send a link, change the question to a harmless, common one
 	if(messageIsInappropriate(original_message)) {
 		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?");
 		return;
+	}
+	var cur_date = new Date();
+	
+	if (original_message.slice(-1) != '?') {
+		original_message = original_message + "?"; 
 	}
 	
 	questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
