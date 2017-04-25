@@ -169,7 +169,7 @@ function promptUser(sender, users) {
 function giveUserQuestion(sender, users, questions) {
 	// If there are no questions waiting to be answered
 	if(!questions[0]) {
-		sendTextMessage(sender, "No questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Answer.");
+		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Answer.");
 	} else { // If there is a question 
 		var index;
 		for(index = 0; index < questions.length; index++) {
@@ -178,7 +178,7 @@ function giveUserQuestion(sender, users, questions) {
 			} 
 		}
 		if (questions[index] == null || questions[index].question == null) {
-	 		sendTextMessage(sender, "No questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Answer.");
+	 		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Answer.");
 		} else {
 			var question = questions[index].question;
 			users[sender].state = "answering";
@@ -200,6 +200,7 @@ function userAnswering(sender, users, questions, original_message) {
 	}
 	
 	var index;
+
 	for (index = 0; index < questions.length; index++) {
 		if (questions[index].answerer == sender) {
 			// Without a subscription, the bot will get banned if it messages users after 24 hours
@@ -222,11 +223,12 @@ function userAnswering(sender, users, questions, original_message) {
 	}
 	// Confirm that your answer was sent.
 	sendTextMessage(sender, "I just sent your answer to the asker. Thanks!");
-	giveUserQuestion(sender, users, questions);
 
 	var popped_question = questions.splice(index, 1); // Remove question from the array
 	popped_question[0].answerer = null;
 	questions.push(popped_question[0]);
+	giveUserQuestion(sender, users, questions);
+
 }
 
 // Handles when a user wants to ask a question
@@ -253,7 +255,7 @@ function userAsking(sender, users, questions, original_message) {
 	}
 	
 	questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
-	sendTextMessage(sender, "Thanks, I will get back to you shortly. \n");
+	sendTextMessage(sender, "Thanks, I will get back to you shortly. \n \n Ask another question, or select Answer to answer a question ");
 }
 
 function setPrompt(sender, users) {
