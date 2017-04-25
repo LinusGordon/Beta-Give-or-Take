@@ -72,10 +72,9 @@ app.post('/webhook/', function (req, res) {
     	
     	let event = req.body.entry[0].messaging[i];
 	    let sender = event.sender.id;
-	   	
-	    if (event.postback && event.postback.payload == "GET_STARTED_PAYLOAD") {
-	    	sendTextMessage(sender, "Welcome! I will help you ask and answer questions with anyone around the world. How does that sound? :)");
-	    } 
+	   	if(event.postback) {
+	   		handlePostbacks(event.postback.payload, sender);
+	   	}
     	
     	// Find the current user
 	    current_user = users[sender]
@@ -86,12 +85,15 @@ app.post('/webhook/', function (req, res) {
 	    	promptUser(sender, users);
 	    }
 
-	    if (event.postback && event.postback.payload == "ASK_PAYLOAD" && found) {
-	    	sendTextMessage(sender, "Please ask your question or select answer to answer a question.");
-	    	users[sender].state = "asking";
-	    } else if (event.postback && event.postback.payload == "ANSWER_PAYLOAD" && found) {
-	    	giveUserQuestion(sender, users, questions)
-	    } 
+	    if(event.quick_reply) {
+	    	if (event.quick_reply.payload == "ASK_PAYLOAD") {
+		    	sendTextMessage(sender, "Please ask your question or select answer to answer a question.");
+		    	users[sender].state = "asking";
+		   	} else if (event.quick_reply.payload == "ANSWER_PAYLOAD") {
+		    	giveUserQuestion(sender, users, questions)
+		    } 
+	    }
+	    
 	    
 	    if (event.message && event.message.text) {
 	  
@@ -133,18 +135,13 @@ app.post('/webhook/', function (req, res) {
 
 function sendTextMessage(sender, text) {
 
-    let messageData = { "attachment":{
-      									"type":"template",
-      									"payload":{
-      										"template_type": "button", 
-    										"text":text, 
-    										"buttons":[
-    											{"type":"postback", "title": "Ask", "payload":"ASK_PAYLOAD"},
-				          						{"type":"postback", "title":"Answer", "payload":"ANSWER_PAYLOAD"}
-				       						]
-				       					}
-				       				}
-				       	}
+    let messageData = {  
+    					"text":text, 
+    					"quick_replies":[
+    							{"content_type":"text", "title": "Ask", "payload":"ASK_PAYLOAD"},
+				          		{"content_type":"text", "title":"Answer", "payload":"ANSWER_PAYLOAD"}
+				       		]
+						}
     request({
 	    url: 'https://graph.facebook.com/v2.9/me/messages',
 	    qs: {access_token:token},
@@ -165,7 +162,7 @@ function sendTextMessage(sender, text) {
 // Asks user if they want to answer a question
 // Creates a new user
 function promptUser(sender, users) {
-	sendTextMessage(sender, "Do you want to ask or answer a question? Use the menu to select");
+	sendTextMessage(sender, "Do you want to ask or answer a question?");
 	setPrompt(sender, users);
 	//users.push({person: sender, answerer: null, state: "prompted"});
 }
@@ -238,7 +235,7 @@ function userAnswering(sender, users, questions, original_message) {
 
 // Handles when a user wants to ask a question
 function userWantsToAsk(sender, users) {
-	sendTextMessage(sender, "Please ask your question.");
+	sendTextMessage(sender, "Please ask your question or select answer to answer a question.");
 	users[sender].state = "asking";
 }
 
@@ -308,3 +305,25 @@ function messageIsInappropriate(text) {
 	}
 	return false;
 } 
+
+function handlePostbacks(payload, sender) {
+	
+	if (payload == "GET_STARTED_PAYLOAD") {
+	    sendTextMessage(sender, "Welcome! I will help you ask and answer questions with anyone around the world. How does that sound? :)");
+	} 
+
+	if(payload == "MORE_INFO_PAYLOAD") {
+
+	}
+
+	if(sender in users) {
+		if (payload == "ASK_PAYLOAD") {
+	    	sendTextMessage(sender, "Please ask your question or select answer to answer a question.");
+	    	users[sender].state = "asking";
+	    } else if (payload == "ANSWER_PAYLOAD") {
+	    	giveUserQuestion(sender, users, questions)
+	    } 
+	}
+
+
+}
