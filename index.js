@@ -72,7 +72,6 @@ app.post('/webhook/', function (req, res) {
     	
     	let event = req.body.entry[0].messaging[i];
 	    let sender = event.sender.id;
-	    total_sent_received++;
 	    found = sender in users;
 	    if(!found) {
 	    	total_users++;
@@ -135,7 +134,8 @@ app.post('/webhook/', function (req, res) {
 });
 
 function sendTextMessage(sender, text, quick_reply) {
-	total_sent_received++;
+	
+	total_sent_received += 2; // 1 message sent = 1 response.... 1+1 = 2
 	var messageData;
 	
 	if(quick_reply) {
