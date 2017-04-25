@@ -100,7 +100,7 @@ app.post('/webhook/', function (req, res) {
  	    		    	
 
 	    	// User has requested to answer a question and is now answering
-	    	if(user_state == "promped" && text != "ask" && text != "answer") {
+	    	if(user_state == "prompted" && text != "ask" && text != "answer") {
 	    		promptUser(sender, users);
 	    	}
 	    	else if (user_state == "answering") {
