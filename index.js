@@ -307,6 +307,11 @@ function sanitizeInput(text) {
 }
 
 function messageIsInappropriate(text) {
+	
+	// Restrict length a little bit
+	if(text.length > 1000) {
+		return true
+	}
 	// User might be trying to send a link
 	if(text.includes(".com") || text.includes("www") || text.includes(".co") || text.includes("https://") || text.includes("http://")) {
 			return true;
