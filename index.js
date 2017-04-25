@@ -75,45 +75,43 @@ app.post('/webhook/', function (req, res) {
 	    	sendTextMessage(sender, "Welcome! I will help you ask and answer questions with anyone around the world. How does that sound? :)");
 	    }
 	    if (event.message && event.message.text) {
-	    	
+	  
 			usageInfo();
-	    	  	
+	    	
 	    	// Find the current user
-	    	for (current_user = 0; current_user < users.length; current_user++) {
-			    if (users[current_user].person == sender) {
-			    	found = true;
-			    	user_state = users[current_user].state;
-			    	break;
-			    }
-		   	}
+	    	current_user = users[sender]
+	    	found = sender in users;
+	    	if(found) {
+	    		user_state = current_user.state;
+	    	}
 
 	    	text = event.message.text;
+	    	original_message = sanitizeInput(text);
 	    	text = text.toLowerCase();
-	    	original_message = event.message.text.replace(/[*{}><]/g,""); // Sanitize string 
 	    	
 	    	// New User
 	    	if (!found) {
-	    		promptUser(sender, users, current_user);
+	    		promptUser(sender, users);
 	    	} else if(found && user_state == "prompted" && text != "ask" && text != "answer") {
 	    		sendTextMessage(sender, "If you want to answer a question, you must type 'answer'. \n \n If you want to ask a question, you must type 'ask'");
 	    	}
 	    	// User has requested to answer a question and is now answering
 	    	else if (found && user_state == "answering") {
-	    		userAnswering(sender, users, current_user, questions, original_message);
+	    		userAnswering(sender, users, questions, original_message);
 	    	}  
 	    	// User has requested to ask a question and is now asking
 	    	else if (found && user_state == "asking") {
-	    		userAsking(sender, users, current_user, questions, original_message);
+	    		userAsking(sender, users, questions, original_message);
 	    	} 
 	    	// User has typed 'ask' or some variation of that
 	    	else if (found && text.includes("ask") && user_state == "prompted"){
-	    		userWantsToAsk(sender, users, current_user);
+	    		userWantsToAsk(sender, users);
 	    	} 
 		    // If a user somehow gets here, treat them as new and ask them to ask or answer again
 		    else if (found && text.includes("answer") && user_state == "prompted") {
-	    		giveUserQuestion(sender, users, current_user, questions);
+	    		giveUserQuestion(sender, users, questions);
 	    	} else if (found) {
-	    		promptUser(sender, users, current_user);
+	    		promptUser(sender, users);
 	    	}
 	    	else {
 		    	console.log("reached the end");
@@ -145,24 +143,19 @@ function sendTextMessage(sender, text) {
 
 // Asks user if they want to answer a question
 // Creates a new user
-function promptUser(sender, users, current_user) {
+function promptUser(sender, users) {
 	sendTextMessage(sender, "Do you want to ask or answer a question?");
-	// remove repeat users
-	for (var i = 0; i < users.length; i++) {
-		if (users[i].person == sender) {
-			users.splice(i, 1);
-		}
-	}
-	users.push({person: sender, answerer: null, state: "prompted"});
+	setPrompt(sender, users);
+	//users.push({person: sender, answerer: null, state: "prompted"});
 }
 
 
 //Gives the user a question to answer
-function giveUserQuestion(sender, users, current_user, questions) {
+function giveUserQuestion(sender, users, questions) {
 	// If there are no questions waiting to be answered
 	if(!questions[0]) {
 		sendTextMessage(sender, "No questions right now. Sorry!");
-		setPrompt(sender, users, current_user);
+		setPrompt(sender, users);
 	} else { // If there is a question 
 		var index;
 		for(index = 0; index < questions.length; index++) {
@@ -172,10 +165,10 @@ function giveUserQuestion(sender, users, current_user, questions) {
 		}
 		if (questions[index] == null || questions[index].question == null) {
 	 		sendTextMessage(sender, "No questions right now. Sorry!");
-	 		setPrompt(sender, users, current_user);
+	 		setPrompt(sender, users);
 		} else {
 			var question = questions[index].question;
-			users[current_user].state = "answering";
+			users[sender].state = "answering";
 			questions[index].answerer = sender;
 			sendTextMessage(sender, "Please answer the following question: \n\n" + question);
 		}
@@ -183,7 +176,7 @@ function giveUserQuestion(sender, users, current_user, questions) {
 }
 
 // Handles when a user answers a question
-function userAnswering(sender, users, current_user, questions, original_message) {
+function userAnswering(sender, users, questions, original_message) {
 	
 	// Just for my curiousity
 	total_questions_answered++;
@@ -211,7 +204,7 @@ function userAnswering(sender, users, current_user, questions, original_message)
 	}
 	// Confirm that your answer was sent.
 	sendTextMessage(sender, "I just sent your answer to the asker. Thanks!");
-	promptUser(sender, users, current_user);
+	promptUser(sender, users);
 
 	var popped_question = questions.splice(index, 1); // Remove question from the array
 	popped_question[0].answerer = null;
@@ -219,13 +212,13 @@ function userAnswering(sender, users, current_user, questions, original_message)
 }
 
 // Handles when a user wants to ask a question
-function userWantsToAsk(sender, users, current_user) {
+function userWantsToAsk(sender, users) {
 	sendTextMessage(sender, "Please ask your question.");
-	users[current_user].state = "asking";
+	users[sender].state = "asking";
 }
 
 // handles when a user asks a question
-function userAsking(sender, users, current_user, questions, original_message) {
+function userAsking(sender, users, questions, original_message) {
 	
 	// Just for my curiousity
 	total_questions_asked++;
@@ -237,28 +230,36 @@ function userAsking(sender, users, current_user, questions, original_message) {
 	}
 	// If a user tries to send a link, change the question to a harmless, common one
 	if(original_message.includes(".com") || original_message.includes("www") || original_message.includes(".co")) {
-			original_message = "Heads or tails?";
+			sendTextMessage(sender, "Sorry. Please do not send links");
+			promptUser(sender, users);
+			return;
 	}
 	questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
 	sendTextMessage(sender, "Thanks, I will get back to you shortly.");
-	setPrompt(sender, users, current_user);
+	setPrompt(sender, users);
 }
 
-function setPrompt(sender, users, current_user) {
-	for (var i = 0; i < users.length; i++) {
-		if (users[i].person == sender) {
-			users.splice(i, 1);
-		}
-	}
-	users.push({person: sender, answerer: null, state: "prompted"});
+function setPrompt(sender, users) {
+	users[sender] = {answerer: null, state: "prompted"};
+
+	// for (var i = 0; i < users.length; i++) {
+	// 	if (users[i].person == sender) {
+	// 		users.splice(i, 1);
+	// 	}
+	// }
+	// users.push({person: sender, answerer: null, state: "prompted"});
 }
 
-// After 1000 inteactions, log some data 
+// Keep track of total questions asked and answered
 function usageInfo() {
 	total_usage++;
-	if(total_usage % 1000 == 0) {
-		console.log("Total Usage = +" + total_usage);
-		console.log("Questions Asked = " + total_questions_asked);
-		console.log("Questions Answered = " + total_questions_answered);  
-	}
+	console.log("Total Usage = +" + total_usage);
+	console.log("Questions Asked = " + total_questions_asked);
+	console.log("Questions Answered = " + total_questions_answered);  
+	
+}
+
+function sanitizeInput(text) {
+	text = text.replace(/[*{}><]/g,""); // Sanitize string 
+	return text;
 }
