@@ -246,9 +246,15 @@ function userAsking(sender, users, questions, original_message) {
 
 	// Just for my curiousity
 	total_questions_asked++;
-	
+
+	for(var i = original_message.length - 1; i > 0; i--) {
+		if(original_message[i] == "?") {
+			original_message = original_message.substring(0, original_message.length - 1);
+		}
+	}
+
 	// User is confused asking questions
-	if(original_message == "no" || original_message == "what" || original_message == "wat" || original_message == "whut" || original_message == "wut" || original_message == "stop" || original_message == "help") {
+	if(original_message == "no" || original_message == "what" || original_message == "wat" || original_message == "whut" || original_message == "wut" || original_message == "stop" || original_message == "help" || original_message == "huh") {
 		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
 		setPrompt(sender, users);
 		return;
