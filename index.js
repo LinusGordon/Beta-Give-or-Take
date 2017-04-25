@@ -88,6 +88,9 @@ app.post('/webhook/', function (req, res) {
 	    	text = event.message.text;
 	    	original_message = sanitizeInput(text);
 	    	text = text.toLowerCase();
+ 
+	    	console.log("current user is: " + current_user);
+	    	console.log("Found: " + found);
 	    	
 	    	// New User
 	    	if (!found) {
