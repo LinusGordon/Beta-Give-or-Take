@@ -329,13 +329,10 @@ function handlePostbacks(payload, sender) {
 	    sendTextMessage(sender, "Welcome! I will help you ask and answer questions with anyone around the world. How does that sound? :)", false);
 	} else if(payload == "ABOUT_PAYLOAD") {
 		sendTextMessage(sender, "Give or Take was developed by Linus Gordon starting April 19, 2017.\n\n For questions, comments, or feedback, please post on http://www.facebook.com/GiveOrTakeChatbot", false);
-		promptUser(sender, users);
 	} else if(payload == "STATS_PAYLOAD") {
 		sendTextMessage(sender, "The current version of Give or Take has:\n" + users.length + " users\n" + total_questions_asked + " Questions Asked\n" + total_questions_answered + "Answers Provided", false);
-		promptUser(sender, users);
 	} else if(payload == "HELP_PAYLOAD") {
 		sendTextMessage(sender, "Give or Take allows you to ask to ask and answer unfiltered questions with anyone on Facebook.\nIf you ask a question, I will reply with another user's answer. \nYou can also choose to answer other user's questions.", false);
-		promptUser(sender, users);
 	}
 
 }
