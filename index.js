@@ -120,7 +120,7 @@ app.post('/webhook/', function (req, res) {
 		    // else if (found && text.includes("answer") && user_state == "prompted") {
 	    	// 	giveUserQuestion(sender, users, questions);
 	    	// } 
-	    	else if (found) {
+	    	else if(found) {
 	    		promptUser(sender, users);
 	    	}
 	    	else {
@@ -133,7 +133,10 @@ app.post('/webhook/', function (req, res) {
 
 function sendTextMessage(sender, text) {
 
-    let messageData = { text:text }
+    let messageData = { text:text, buttons:[
+    										{"type":"postback", "title": "Ask", "payload":"ASK_PAYLOAD"},
+				          					{"type":"postback", "title":"Answer", "payload":"ANSWER_PAYLOAD"}
+				       ]}
     request({
 	    url: 'https://graph.facebook.com/v2.9/me/messages',
 	    qs: {access_token:token},
