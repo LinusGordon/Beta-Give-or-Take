@@ -160,9 +160,8 @@ function sendTextMessage(sender, text, quick_reply) {
 // Asks user if they want to answer a question
 // Creates a new user
 function promptUser(sender, users) {
-	sendTextMessage(sender, "Do you want to ask or answer a question?", true);
 	setPrompt(sender, users);
-	//users.push({person: sender, answerer: null, state: "prompted"});
+	sendTextMessage(sender, "Do you want to ask or answer a question?", true);
 }
 
 
