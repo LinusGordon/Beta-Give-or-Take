@@ -224,6 +224,7 @@ function userAnswering(sender, users, questions, original_message) {
 	}
 
 	sendTextMessage(sender, "Thanks, I will send your answer to the asker. \n\nIn the meantime, do you want to ask or answer another question?", true);
+	setPrompt(sender, users);
 
 	var popped_question = questions.splice(index, 1); // Remove question from the array
 	popped_question[0].answerer = null;
