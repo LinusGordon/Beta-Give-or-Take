@@ -103,13 +103,9 @@ app.post('/webhook/', function (req, res) {
  
 	    	console.log("current user is: " + current_user);
 	    	console.log("Found: " + found);
-	    	
-	    	// New User
-	    	if(found && user_state == "prompted" && text != "ask" && text != "answer") {
-	    		sendTextMessage(sender, "If you want to answer a question, you must select 'answer'. \n \n If you want to ask a question, you must select 'ask'");
-	    	}
+	    		    	
 	    	// User has requested to answer a question and is now answering
-	    	else if (found && user_state == "answering") {
+	    	if (found && user_state == "answering") {
 	    		userAnswering(sender, users, questions, original_message);
 	    	}  
 	    	// User has requested to ask a question and is now asking
@@ -183,7 +179,7 @@ function giveUserQuestion(sender, users, questions) {
 			users[sender].state = "answering";
 			questions[index].answerer = sender;
 			console.log("THE QUESTION IS" + question);
-			sendTextMessage(sender, "Please select Ask to ask a question or \n Answer the following question: \n\n" + question);
+			sendTextMessage(sender, "Select 'Ask' to ask a question or... \nAnswer the following question: \n\n" + question);
 		}
 	}
 }
@@ -248,7 +244,7 @@ function userAsking(sender, users, questions, original_message) {
 	}
 	// If a user tries to send a link, change the question to a harmless, common one
 	if(messageIsInappropriate(original_message)) {
-		sendTextMessage(sender, "Sorry. Please do not send links \n \n Do you want to try again?");
+		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?");
 		return;
 	}
 	
@@ -283,6 +279,11 @@ function messageIsInappropriate(text) {
 	// This regex was found on http://stackoverflow.com/questions/16424659/check-if-a-string-contains-an-email-address
 	var re = /(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
 	if(re.test(text)) {
+		return true;
+	}
+	text = text.toLowerCase();
+	// Detect user errors
+	if(text == "answer" || text == "answr" || text == "ask" || text = "aswer") {
 		return true;
 	}
 	return false;
