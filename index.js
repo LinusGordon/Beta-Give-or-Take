@@ -111,7 +111,7 @@ app.post('/webhook/', function (req, res) {
 	    		userAsking(sender, users, questions, original_message);
 	    	} 
 	    	// User has typed 'ask' or some variation of that
-	    	 else if (text.includes("ask") && user_state == "prompted"){
+	    	else if (text.includes("ask") && user_state == "prompted"){
 	    	 	userWantsToAsk(sender, users);
 	    	} 
 	    	// User wants to answer
