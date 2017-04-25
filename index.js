@@ -30,8 +30,8 @@ var users = [];
 
 var initialQuestions = ["How are you doing today?", "What makes you an interesting person?", "What is your current goal?", "What is your favorite type of cookie?", "What is your favorite TV show?", "Funniest thing that happened to you today?", "Where are you?", "What happens to us when we die?", "How old are you?", "Pancakes or waffles?", "What time is it for you?", "What should I eat for dinner?", "What is your middle name?", "Favorite band or musician?", "What is your favorite color?", "Funniest thing that happened to you this week?", "Best childhood memory?", "Would you rather be gossiped about or never talked about at all?", "Favorite school?", "Would you rather end hunger or hatred?", "Do you believe in parallel universes?", "Who is your favorite Disney character?", "Do you have a secret admirer?", "What is the craziest thing you did as a kid?", "What is your best memory from college?", "If there was a draft, would you dodge it?", "What is your favorite track and field event?", "What would make this chatbot better?", "Do you believe in aliens?", "What is the most attractive quality in a person?", "What's the grossest thing you've ever had to eat?", "Do you believe in luck?", "Who's the best rapper right now?", "What makes you happy?", "What's your biggest pet peeve?", "Who do you have a crush on?", "Would you recommend this bot to a friend? Why or why not?", "What could this bot do to improve?", "What sport would be the funniest to add a mandatory amount of alcohol to?", "What is today's date?", "What is 10 + 81?", "What is the funniest question you've been asked on Give or Take?", "How did you discover this bot?", "What is your personal mission statement?", "What are the top 2 compliments you hear from people about yourself?", "What came first, the chicken or the egg?", "How many licks does it take to get to the center of a tootsie pop?", "If animals could talk, which would be the rudest?", "What’s the most ridiculous fact you know?", "In one sentence, how would you sum up the internet?", "Is a hotdog a sandwich?", "If peanut butter wasn’t called peanut butter, what would it be called?", "What’s the best inside joke you’ve been a part of?", "Who is your role model?"];
 
-if(total_sent_received == 0) {
- 	for(var i = 0; i < initialQuestions.length; i++) {
+if (total_sent_received == 0) {
+ 	for (var i = 0; i < initialQuestions.length; i++) {
 		userAsking(null, users, questions, initialQuestions[i]);
  	}
 }
@@ -80,6 +80,8 @@ app.post('/webhook/', function (req, res) {
 	   	if(event.postback) {
 	   		handlePostbacks(event.postback.payload, sender);
 	   	}
+
+	   	console.log("EVENT = " + event);
 
 	   // 	if(event.message && event.message.quick_reply) {
 	   //  	if (event.message.quick_reply.payload == "ASK_PAYLOAD") {
@@ -254,21 +256,21 @@ function userAsking(sender, users, questions, original_message) {
 
 	total_questions_asked++;
 
-	for(var i = original_message.length - 1; i > 0; i--) {
-		if(original_message[i] == "?") {
+	for (var i = original_message.length - 1; i > 0; i--) {
+		if (original_message[i] == "?") {
 			original_message = original_message.substring(0, original_message.length - 1);
 		}
 	}
 
 	// User is confused asking questions
-	if(original_message == "no" || original_message == "what" || original_message == "wat" || original_message == "whut" || original_message == "wut" || original_message == "stop" || original_message == "help" || original_message == "huh") {
+	if (original_message == "no" || original_message == "what" || original_message == "wat" || original_message == "whut" || original_message == "wut" || original_message == "stop" || original_message == "help" || original_message == "huh") {
 		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
 		setPrompt(sender, users);
 		return;
 	}
 
 	// If a user tries to send a link, change the question to a harmless, common one
-	if(messageIsInappropriate(original_message)) {
+	if (messageIsInappropriate(original_message)) {
 		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
 		setPrompt(sender, users);
 		return;
@@ -279,7 +281,7 @@ function userAsking(sender, users, questions, original_message) {
 		original_message = original_message + "?"; 
 	}
 	console.log("Putting this question on the queue:" + original_message);
-	if(sender in users) {
+	if (sender in users) {
 		questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
 		sendTextMessage(sender, "Thanks, I will get back to you shortly. \n\nIn the meantime, do you want to ask or answer another question?", true);
 		setPrompt(sender, users);
@@ -339,11 +341,11 @@ function handlePostbacks(payload, sender) {
 	
 	if (payload == "GET_STARTED_PAYLOAD") {
 	    sendTextMessage(sender, "Welcome! I will help you ask and answer questions with anyone around the world. How does that sound? :)", false);
-	} else if(payload == "ABOUT_PAYLOAD") {
+	} else if (payload == "ABOUT_PAYLOAD") {
 		sendTextMessage(sender, "Give or Take was developed by Linus Gordon starting April 19, 2017. The bot has been featured on the front page of Botlist, Qwazou, and more.\n\nFor questions, comments, or feedback, please post on http://www.facebook.com/GiveOrTakeChatbot", false);
-	} else if(payload == "STATS_PAYLOAD") {
+	} else if (payload == "STATS_PAYLOAD") {
 		sendTextMessage(sender, "The current version of Give or Take has:\n" + total_users + " users\n" + total_questions_asked + " Questions Asked\n" + total_questions_answered + " Answers Provided\n" + total_sent_received + " Messages Sent and Received", false);
-	} else if(payload == "HELP_PAYLOAD") {
+	} else if (payload == "HELP_PAYLOAD") {
 		sendTextMessage(sender, "Give or Take allows you to ask to ask and answer unfiltered questions with anyone on Facebook.\nIf you ask a question, I will reply with another user's answer. \nYou can also choose to answer other user's questions.", false);
 	}
 	setPrompt(sender, users);
