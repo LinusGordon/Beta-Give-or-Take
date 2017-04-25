@@ -81,6 +81,11 @@ app.post('/webhook/', function (req, res) {
 	   		handlePostbacks(event.postback.payload, sender);
 	   	}
 
+	   	if(event.message && event.message.attachments) {
+	   		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
+			setPrompt(sender, users);
+	   	}
+
 	   	console.log("EVENT = " + event);
 
 	   // 	if(event.message && event.message.quick_reply) {
