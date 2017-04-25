@@ -8,7 +8,8 @@ const request = require('request');
 const app = express();
 const token = process.env.token;
 var http = require("http");
-var total_usage = 0;
+var total_usage = 169; // This is the number of users from my last version
+var total_users = 0;
 var total_questions_asked = 0;
 var total_questions_answered = 0;
  
@@ -70,6 +71,12 @@ app.post('/webhook/', function (req, res) {
     	
     	let event = req.body.entry[0].messaging[i];
 	    let sender = event.sender.id;
+
+	    found = sender in users;
+	    if(!found) {
+	    	total_users++;
+	    }
+
 	   	if(event.postback) {
 	   		handlePostbacks(event.postback.payload, sender);
 	   	}
