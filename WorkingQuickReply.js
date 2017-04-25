@@ -192,6 +192,7 @@ function giveUserQuestion(sender, users, questions) {
 // Handles when a user answers a question
 function userAnswering(sender, users, questions, original_message) {
 	
+	// Just for my curiousity
 	total_questions_answered++;
 	
 	if(messageIsInappropriate(original_message)) {
@@ -243,6 +244,7 @@ function userAsking(sender, users, questions, original_message) {
 	
 	setPrompt(sender, users);
 
+	// Just for my curiousity
 	total_questions_asked++;
 
 	for(var i = original_message.length - 1; i > 0; i--) {
@@ -327,12 +329,6 @@ function handlePostbacks(payload, sender) {
 	
 	if (payload == "GET_STARTED_PAYLOAD") {
 	    sendTextMessage(sender, "Welcome! I will help you ask and answer questions with anyone around the world. How does that sound? :)", false);
-	} else if(payload == "ABOUT_PAYLOAD") {
-		sendTextMessage(sender, "Give or Take was developed by Linus Gordon starting April 19, 2017.\n\n For questions, comments, or feedback, please post on http://www.facebook.com/GiveOrTakeChatbot", false);
-	} else if(payload == "STATS_PAYLOAD") {
-		sendTextMessage(sender, "The current version of Give or Take has:\n " + users.length + " users\n" + total_questions_asked + "Questions asked\n" + total_questions_answered + "Answers Provided", false);
-	} else if(payload == "HELP_PAYLOAD") {
-		sendTextMessage(sender, "Give or Take allows you to ask to ask and answer unfiltered questions with anyone on Facebook.\nIf you ask a question, the chatbot will reply with another user's answer. \nYou can also choose to answer other user's questions.", false);
-	}
+	} 
 
 }
