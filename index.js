@@ -30,7 +30,7 @@ var initialQuestions = ["How are you doing today?", "What makes you an interesti
 
 if(total_usage == 0) {
  	for(var i = 0; i < initialQuestions.length; i++) {
-		userAsking(null, users, null, questions, initialQuestions[i]);
+		userAsking(null, users, questions, initialQuestions[i]);
  	}
 }
 
