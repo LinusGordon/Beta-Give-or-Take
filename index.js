@@ -135,7 +135,7 @@ app.post('/webhook/', function (req, res) {
 
 function sendTextMessage(sender, text, quick_reply) {
 	
-	total_sent_received += 2; // 1 message sent = 1 response.... 1+1 = 2
+	total_sent_received++; 
 	var messageData;
 	
 	if(quick_reply) {
