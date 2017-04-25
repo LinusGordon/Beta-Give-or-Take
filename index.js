@@ -86,10 +86,10 @@ app.post('/webhook/', function (req, res) {
 	    	promptUser(sender, users);
 	    }
 
-	    if (event.postback && event.postback.payload && found == "ASK_PAYLOAD") {
+	    if (event.postback && event.postback.payload == "ASK_PAYLOAD" && found) {
 	    	sendTextMessage(sender, "Please ask your question or select answer to answer a question.");
 	    	users[sender].state = "asking";
-	    } else if (event.postback && event.postback.payload && found == "ANSWER_PAYLOAD") {
+	    } else if (event.postback && event.postback.payload == "ANSWER_PAYLOAD" && found) {
 	    	sendTextMessage(sender, "Please answer the following question");
 	    	users[sender].state = "answering";
 	    } 
