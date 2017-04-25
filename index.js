@@ -197,6 +197,7 @@ function userAnswering(sender, users, questions, original_message) {
 	
 	if(messageIsInappropriate(original_message)) {
 		sendTextMessage(sender, "Hmm... There was something wrong with your answer \n\n Select answer to try again", true);
+		setPrompt(sender, users);
 		return;
 	}
 	
@@ -249,12 +250,14 @@ function userAsking(sender, users, questions, original_message) {
 	// User is confused asking questions
 	if(original_message == "no" || original_message == "what" || original_message == "wat" || original_message == "whut" || original_message == "wut" || original_message == "stop" || original_message == "help") {
 		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
+		setPrompt(sender, users);
 		return;
 	}
 
 	// If a user tries to send a link, change the question to a harmless, common one
 	if(messageIsInappropriate(original_message)) {
 		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
+		setPrompt(sender, users;)
 		return;
 	}
 	var cur_date = new Date();
@@ -266,6 +269,7 @@ function userAsking(sender, users, questions, original_message) {
 	if(sender in users) {
 		questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
 		sendTextMessage(sender, "Thanks, I will get back to you shortly. \n\nIn the meantime, do you want to ask or answer another question?", true);
+		setPrompt(sender, users);
 	}
 }
 
