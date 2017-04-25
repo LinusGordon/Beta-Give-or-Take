@@ -8,8 +8,8 @@ const request = require('request');
 const app = express();
 const token = process.env.token;
 var http = require("http");
-var total_usage = 169; // This is the number of users from my last version
-var total_users = 0;
+var total_usage = 0; 
+var total_users = 169; // This is the number of users from my last version
 var total_questions_asked = 0;
 var total_questions_answered = 0;
  
