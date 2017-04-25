@@ -220,7 +220,6 @@ function userAnswering(sender, users, questions, original_message) {
 	// It would equal null if it is a repeat question. 
 	if(questions[index] && questions[index].completed == false) {
 		sendTextMessage(questions[index].asker, "You asked: " + questions[index].question + "\n \nThe answer is: " + original_message, false);
-		promptUser(sender, users);
 		questions[index].completed = true;
 	}
 
