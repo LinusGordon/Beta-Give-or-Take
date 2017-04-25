@@ -222,7 +222,7 @@ function userAnswering(sender, users, questions, original_message) {
 		promptUser(sender, users);
 		questions[index].completed = true;
 	}
-	
+
 	promptUser(sender, users, current_user);
 
 	var popped_question = questions.splice(index, 1); // Remove question from the array
@@ -240,6 +240,8 @@ function userWantsToAsk(sender, users) {
 // handles when a user asks a question
 function userAsking(sender, users, questions, original_message) {
 	
+	setPrompt(sender, users);
+	
 	// Just for my curiousity
 	total_questions_asked++;
 	
@@ -256,7 +258,7 @@ function userAsking(sender, users, questions, original_message) {
 	
 	questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
 	sendTextMessage(sender, "Thanks, I will get back to you shortly. \n\nIn the meantime, do you want to ask or answer another question?", true);
-	setPrompt(sender, users);
+	
 }
 
 function setPrompt(sender, users) {
