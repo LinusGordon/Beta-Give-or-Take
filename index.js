@@ -257,9 +257,10 @@ function userAsking(sender, users, questions, original_message) {
 		original_message = original_message + "?"; 
 	}
 	console.log("Putting this question on the queue:" + original_message);
-	questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
-	sendTextMessage(sender, "Thanks, I will get back to you shortly. \n\nIn the meantime, do you want to ask or answer another question?", true);
-	
+	if(sender in users) {
+		questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
+		sendTextMessage(sender, "Thanks, I will get back to you shortly. \n\nIn the meantime, do you want to ask or answer another question?", true);
+	}
 }
 
 function setPrompt(sender, users) {
