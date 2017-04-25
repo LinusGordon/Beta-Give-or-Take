@@ -222,6 +222,7 @@ function userAnswering(sender, users, questions, original_message) {
 		promptUser(sender, users);
 		questions[index].completed = true;
 	}
+	
 	promptUser(sender, users, current_user);
 
 	var popped_question = questions.splice(index, 1); // Remove question from the array
