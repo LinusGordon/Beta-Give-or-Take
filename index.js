@@ -73,28 +73,18 @@ app.post('/webhook/', function (req, res) {
     	let event = req.body.entry[0].messaging[i];
 	    let sender = event.sender.id;
 	    found = sender in users;
-	    if(!found) {
+	    if (!found) { // Keep track of total number of users
 	    	total_users++;
 	    }
 
-	   	if(event.postback) {
+	   	if (event.postback) { // handles menu clicks
 	   		handlePostbacks(event.postback.payload, sender);
 	   	}
 
-	   	if(event.message && event.message.attachments) {
-	   		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
+	   	if (event.message && event.message.attachments) { // If a user trys to send a link, attachment, or sticker
+	   		sendTextMessage(sender, "Sorry, I don't accept links, stickers, or attachments. \n \n Do you want to ask or answer a question?", true);
 			setPrompt(sender, users);
 	   	}
-
-	   	console.log("EVENT = " + event);
-
-	   // 	if(event.message && event.message.quick_reply) {
-	   //  	if (event.message.quick_reply.payload == "ASK_PAYLOAD") {
-				// userWantsToAsk(sender, users);
-		  //  	} else if (event.message.quick_reply.payload == "ANSWER_PAYLOAD") {
-		  //   	giveUserQuestion(sender, users, questions)
-		  //   } 
-	   //  }
     	
     	// Find the current user
 	    found = sender in users;
@@ -104,15 +94,14 @@ app.post('/webhook/', function (req, res) {
 	    	promptUser(sender, users);
 	    }
 	    
-	    if(event.message && event.message.text && found) {
-	  
+	    if(event.message && event.message.text && found) { // If the user sends a message
+			
 			usageInfo();
 
 	    	text = event.message.text;
 	    	original_message = sanitizeInput(text);
 	    	text = text.toLowerCase();
  	    		    	
-
 	    	// User has requested to answer a question and is now answering
 	    	if(user_state == "prompted" && text != "ask" && text != "answer") {
 	    		promptUser(sender, users);
@@ -132,7 +121,7 @@ app.post('/webhook/', function (req, res) {
 		    else if (found && text.includes("answer") && user_state == "prompted") {
 	    		giveUserQuestion(sender, users, questions);
 	    	} 
-	    	else if(found) {
+	    	else if (found) {
 	    		promptUser(sender, users);
 	    	}
 	    }
@@ -145,7 +134,7 @@ function sendTextMessage(sender, text, quick_reply) {
 	total_sent_received++; 
 	var messageData;
 	
-	if(quick_reply) {
+	if (quick_reply) {
 	    messageData = {  
 	    					"text":text, 
 	    					"quick_replies":[
@@ -184,11 +173,11 @@ function promptUser(sender, users) {
 //Gives the user a question to answer
 function giveUserQuestion(sender, users, questions) {
 	// If there are no questions waiting to be answered
-	if(!questions[0]) {
+	if (!questions[0]) {
 		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Ask.", true);
 	} else { // If there is a question 
 		var index;
-		for(index = 0; index < questions.length; index++) {
+		for (index = 0; index < questions.length; index++) {
 			if (questions[index].asker != sender) {
 		 		break;
 			} 
@@ -199,7 +188,6 @@ function giveUserQuestion(sender, users, questions) {
 			var question = questions[index].question;
 			users[sender].state = "answering";
 			questions[index].answerer = sender;
-			console.log("Question in give user" + question);
 			sendTextMessage(sender, "Please answer the following question.\n\n" + question, false);
 		}
 	}
@@ -210,7 +198,7 @@ function userAnswering(sender, users, questions, original_message) {
 	
 	total_questions_answered++;
 	
-	if(messageIsInappropriate(original_message)) {
+	if (messageIsInappropriate(original_message)) {
 		sendTextMessage(sender, "Hmm... There was something wrong with your answer \n\n Let's try that again", true);
 		setPrompt(sender, users);
 		return;
@@ -234,7 +222,7 @@ function userAnswering(sender, users, questions, original_message) {
 	}
 	// Send message to the asker with an answer
 	// It would equal null if it is a repeat question. 
-	if(questions[index] && questions[index].completed == false) {
+	if (questions[index] && questions[index].completed == false) {
 		sendTextMessage(questions[index].asker, "You asked: " + questions[index].question + "\n \nThe answer is: " + original_message, true);
 		questions[index].completed = true;
 	}
@@ -285,7 +273,6 @@ function userAsking(sender, users, questions, original_message) {
 	if (original_message.slice(-1) != '?') {
 		original_message = original_message + "?"; 
 	}
-	console.log("Putting this question on the queue:" + original_message);
 	if (sender in users) {
 		questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
 		sendTextMessage(sender, "Thanks, I will get back to you shortly. \n\nIn the meantime, do you want to ask or answer another question?", true);
@@ -314,25 +301,25 @@ function sanitizeInput(text) {
 function messageIsInappropriate(text) {
 	
 	// Restrict length a little bit
-	if(text.length > 1000) {
+	if (text.length > 1000) {
 		return true
 	}
 	// User might be trying to send a link
-	if(text.includes(".com") || text.includes("www") || text.includes(".co") || text.includes("https://") || text.includes("http://")) {
+	if (text.includes(".com") || text.includes("www") || text.includes(".co") || text.includes("https://") || text.includes("http://")) {
 			return true;
 	}
 	// User might be trying to send an e-mail
 	// This regex was found on http://stackoverflow.com/questions/16424659/check-if-a-string-contains-an-email-address
 	var re = /(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
-	if(re.test(text)) {
+	if (re.test(text)) {
 		return true;
 	}
 	text = text.toLowerCase();
-	if(text.includes("@") && (text.includes("gmail") || text.includes("@hotmail") || text.includes("@yahoo") || text.includes(".edu"))) {
+	if (text.includes("@") && (text.includes("gmail") || text.includes("@hotmail") || text.includes("@yahoo") || text.includes(".edu"))) {
 		return true;
 	}
 	// Detect user errors
-	if(text == "answer" || text == "answr" || text == "ask" || text == "aswer" || text == "skip" || text == "pass") {
+	if (text == "answer" || text == "answr" || text == "ask" || text == "aswer" || text == "skip" || text == "pass") {
 		return true;
 	}
 	// User is trying to send a phone number if true
@@ -340,7 +327,7 @@ function messageIsInappropriate(text) {
 	re = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
 	for(var i = 0; i < text.length; i++) {
 		var possiblePhoneNumber = text.substring(i, i + 12); // pull out 12 characters for a 10 digit number with possible punctuation
-		if(re.test(possiblePhoneNumber)) {
+		if (re.test(possiblePhoneNumber)) {
 			return true;
 		}
 	}
