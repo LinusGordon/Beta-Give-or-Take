@@ -232,25 +232,19 @@ function userAsking(sender, users, questions, original_message) {
 		original_message = original_message + "?"; 
 	}
 	// If a user tries to send a link, change the question to a harmless, common one
-	if(original_message.includes(".com") || original_message.includes("www") || original_message.includes(".co")) {
-			sendTextMessage(sender, "Sorry. Please do not send links");
+	if(messageIsInappropriate(original_message)) {
+		sendTextMessage(sender, "Sorry. Please do not send links");
 			promptUser(sender, users);
 			return;
 	}
+	
 	questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
-	sendTextMessage(sender, "Thanks, I will get back to you shortly.");
+	sendTextMessage(sender, "Thanks, I will get back to you shortly. \n In the meantime, do you want to ask or answer another question?");
 	setPrompt(sender, users);
 }
 
 function setPrompt(sender, users) {
 	users[sender] = {answerer: null, state: "prompted"};
-
-	// for (var i = 0; i < users.length; i++) {
-	// 	if (users[i].person == sender) {
-	// 		users.splice(i, 1);
-	// 	}
-	// }
-	// users.push({person: sender, answerer: null, state: "prompted"});
 }
 
 // Keep track of total questions asked and answered
@@ -265,4 +259,18 @@ function usageInfo() {
 function sanitizeInput(text) {
 	text = text.replace(/[*{}><]/g,""); // Sanitize string 
 	return text;
+}
+
+function messageIsInappropriate(text) {
+	// User might be trying to send a link
+	if(text.includes(".com") || text.includes("www") || text.includes(".co") || text.includes("https://") || text.includes("http://")) {
+			return true;
+	}
+	// User might be trying to send an e-mail
+	// This regex was found on http://stackoverflow.com/questions/16424659/check-if-a-string-contains-an-email-address
+	var re = /(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
+	if(re.test(text)) {
+		return true;
+	}
+	return false;
 }
