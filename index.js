@@ -257,7 +257,7 @@ function userAsking(sender, users, questions, original_message) {
 	// If a user tries to send a link, change the question to a harmless, common one
 	if(messageIsInappropriate(original_message)) {
 		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
-		setPrompt(sender, users;)
+		setPrompt(sender, users);
 		return;
 	}
 	var cur_date = new Date();
