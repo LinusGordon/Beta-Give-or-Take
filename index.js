@@ -254,7 +254,7 @@ function userAsking(sender, users, questions, original_message) {
 	
 	questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
 	sendTextMessage(sender, "Thanks, I will get back to you shortly. \n\nIn the meantime, do you want to ask or answer another question?", true);
-	users[sender].state = "prompted";
+	setPrompt(sender, users);
 }
 
 function setPrompt(sender, users) {
