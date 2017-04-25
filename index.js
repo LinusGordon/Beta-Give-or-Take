@@ -136,7 +136,9 @@ function sendTextMessage(sender, text) {
     let messageData = { "attachment":{
       									"type":"template",
       									"payload":{
-    										text:text, buttons:[
+      										"template_type": "button", 
+    										"text":text, 
+    										"buttons":[
     											{"type":"postback", "title": "Ask", "payload":"ASK_PAYLOAD"},
 				          						{"type":"postback", "title":"Answer", "payload":"ANSWER_PAYLOAD"}
 				       						]
