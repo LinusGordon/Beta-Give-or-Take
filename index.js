@@ -302,7 +302,7 @@ function messageIsInappropriate(text) {
 	re = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
 	for(var i = 0; i < text.length; i++) {
 		var possiblePhoneNumber = text.substring(i, 13); // pull out 13 characters for a 10 digit number plus punctuation
-		if(re.test(text)) {
+		if(re.test(possiblePhoneNumber)) {
 			return true;
 		}
 	}
