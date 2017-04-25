@@ -300,8 +300,10 @@ function messageIsInappropriate(text) {
 	// User is trying to send a phone number if true
 	// This regex was found on http://stackoverflow.com/questions/16699007/regular-expression-to-match-standard-10-digit-phone-number
 	re = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
-	if(text.match(re)) {
-		return true;
-	}
+	for(var i = 0; i < text.length; i++) {
+		var possiblePhoneNumber = text.substring(i, 13); // pull out 13 characters for a 10 digit number plus punctuation
+		if(re.test(text)) {
+			return true;
+		}
 	return false;
 }
