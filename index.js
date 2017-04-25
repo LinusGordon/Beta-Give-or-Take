@@ -222,7 +222,9 @@ function userAnswering(sender, users, questions, original_message) {
 		promptUser(sender, users);
 		questions[index].completed = true;
 	}
-
+	sendTextMessage(sender, "I just sent your answer to the asker. Thanks!");
+	promptUser(sender, users, current_user);
+	
 	var popped_question = questions.splice(index, 1); // Remove question from the array
 	popped_question[0].answerer = null;
 	questions.push(popped_question[0]);
