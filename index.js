@@ -74,11 +74,11 @@ app.post('/webhook/', function (req, res) {
 	   		handlePostbacks(event.postback.payload, sender);
 	   	}
 
-	   	if(event.quick_reply) {
-	    	if (event.quick_reply.payload == "ASK_PAYLOAD") {
+	   	if(event.message && event.message.quick_reply) {
+	    	if (event.message.quick_reply.payload == "ASK_PAYLOAD") {
 		    	sendTextMessage(sender, "Please ask your question or select answer to answer a question.");
 		    	users[sender].state = "asking";
-		   	} else if (event.quick_reply.payload == "ANSWER_PAYLOAD") {
+		   	} else if (event.message.quick_reply.payload == "ANSWER_PAYLOAD") {
 		    	giveUserQuestion(sender, users, questions)
 		    } 
 	    }
