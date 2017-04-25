@@ -69,21 +69,34 @@ app.post('/webhook/', function (req, res) {
     var found = false;
     var user_state;
     for (let i = 0; i < messaging_events.length; i++) {
-	    let event = req.body.entry[0].messaging[i];
+    	
+    	let event = req.body.entry[0].messaging[i];
 	    let sender = event.sender.id;
+	   	
 	    if (event.postback && event.postback.payload == "GET_STARTED_PAYLOAD") {
 	    	sendTextMessage(sender, "Welcome! I will help you ask and answer questions with anyone around the world. How does that sound? :)");
+	    } 
+    	
+    	// Find the current user
+	    current_user = users[sender]
+	    found = sender in users;
+	    if(found) {
+	    	user_state = current_user.state;
+	    } else {
+	    	promptUser(sender, users);
 	    }
+
+	    if (event.postback && event.postback.payload && found == "ASK_PAYLOAD") {
+	    	sendTextMessage(sender, "Please ask your question or select answer to answer a question.");
+	    	users[sender].state = "asking";
+	    } else if (event.postback && event.postback.payload && found == "ANSWER_PAYLOAD") {
+	    	sendTextMessage(sender, "Please answer the following question");
+	    	users[sender].state = "answering";
+	    } 
+	    
 	    if (event.message && event.message.text) {
 	  
 			usageInfo();
-	    	
-	    	// Find the current user
-	    	current_user = users[sender]
-	    	found = sender in users;
-	    	if(found) {
-	    		user_state = current_user.state;
-	    	}
 
 	    	text = event.message.text;
 	    	original_message = sanitizeInput(text);
@@ -93,10 +106,8 @@ app.post('/webhook/', function (req, res) {
 	    	console.log("Found: " + found);
 	    	
 	    	// New User
-	    	if (!found) {
-	    		promptUser(sender, users);
-	    	} else if(found && user_state == "prompted" && text != "ask" && text != "answer") {
-	    		sendTextMessage(sender, "If you want to answer a question, you must type 'answer'. \n \n If you want to ask a question, you must type 'ask'");
+	    	if(found && user_state == "prompted" && text != "ask" && text != "answer") {
+	    		sendTextMessage(sender, "If you want to answer a question, you must select 'answer'. \n \n If you want to ask a question, you must select 'ask'");
 	    	}
 	    	// User has requested to answer a question and is now answering
 	    	else if (found && user_state == "answering") {
@@ -107,13 +118,14 @@ app.post('/webhook/', function (req, res) {
 	    		userAsking(sender, users, questions, original_message);
 	    	} 
 	    	// User has typed 'ask' or some variation of that
-	    	else if (found && text.includes("ask") && user_state == "prompted"){
-	    		userWantsToAsk(sender, users);
-	    	} 
+	    	// else if (found && text.includes("ask") && user_state == "prompted"){
+	    	// 	userWantsToAsk(sender, users);
+	    	// } 
 		    // If a user somehow gets here, treat them as new and ask them to ask or answer again
-		    else if (found && text.includes("answer") && user_state == "prompted") {
-	    		giveUserQuestion(sender, users, questions);
-	    	} else if (found) {
+		    // else if (found && text.includes("answer") && user_state == "prompted") {
+	    	// 	giveUserQuestion(sender, users, questions);
+	    	// } 
+	    	else if (found) {
 	    		promptUser(sender, users);
 	    	}
 	    	else {
@@ -147,7 +159,7 @@ function sendTextMessage(sender, text) {
 // Asks user if they want to answer a question
 // Creates a new user
 function promptUser(sender, users) {
-	sendTextMessage(sender, "Do you want to ask or answer a question?");
+	sendTextMessage(sender, "Do you want to ask or answer a question? Use the menu to select");
 	setPrompt(sender, users);
 	//users.push({person: sender, answerer: null, state: "prompted"});
 }
@@ -157,8 +169,7 @@ function promptUser(sender, users) {
 function giveUserQuestion(sender, users, questions) {
 	// If there are no questions waiting to be answered
 	if(!questions[0]) {
-		sendTextMessage(sender, "No questions right now. Sorry!");
-		setPrompt(sender, users);
+		sendTextMessage(sender, "No questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Answer.");
 	} else { // If there is a question 
 		var index;
 		for(index = 0; index < questions.length; index++) {
@@ -167,8 +178,7 @@ function giveUserQuestion(sender, users, questions) {
 			} 
 		}
 		if (questions[index] == null || questions[index].question == null) {
-	 		sendTextMessage(sender, "No questions right now. Sorry!");
-	 		setPrompt(sender, users);
+	 		sendTextMessage(sender, "No questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Answer.");
 		} else {
 			var question = questions[index].question;
 			users[sender].state = "answering";
@@ -183,6 +193,11 @@ function userAnswering(sender, users, questions, original_message) {
 	
 	// Just for my curiousity
 	total_questions_answered++;
+	
+	if(messageIsInappropriate(original_message)) {
+		sendTextMessage(sender, "Sorry. Please do not send links. \n \n Want to try again?");
+		return;
+	}
 	
 	var index;
 	for (index = 0; index < questions.length; index++) {
@@ -207,7 +222,7 @@ function userAnswering(sender, users, questions, original_message) {
 	}
 	// Confirm that your answer was sent.
 	sendTextMessage(sender, "I just sent your answer to the asker. Thanks!");
-	promptUser(sender, users);
+	giveUserQuestion(sender, users, questions);
 
 	var popped_question = questions.splice(index, 1); // Remove question from the array
 	popped_question[0].answerer = null;
@@ -233,14 +248,12 @@ function userAsking(sender, users, questions, original_message) {
 	}
 	// If a user tries to send a link, change the question to a harmless, common one
 	if(messageIsInappropriate(original_message)) {
-		sendTextMessage(sender, "Sorry. Please do not send links");
-			promptUser(sender, users);
-			return;
+		sendTextMessage(sender, "Sorry. Please do not send links \n \n Do you want to try again?");
+		return;
 	}
 	
 	questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
-	sendTextMessage(sender, "Thanks, I will get back to you shortly. \n In the meantime, do you want to ask or answer another question?");
-	setPrompt(sender, users);
+	sendTextMessage(sender, "Thanks, I will get back to you shortly. \n");
 }
 
 function setPrompt(sender, users) {
