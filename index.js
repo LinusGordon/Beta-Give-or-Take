@@ -226,7 +226,7 @@ function userAnswering(sender, users, questions, original_message) {
 	// Send message to the asker with an answer
 	// It would equal null if it is a repeat question. 
 	if(questions[index] && questions[index].completed == false) {
-		sendTextMessage(questions[index].asker, "You asked: " + questions[index].question + "\n \nThe answer is: " + original_message, false);
+		sendTextMessage(questions[index].asker, "You asked: " + questions[index].question + "\n \nThe answer is: " + original_message, true);
 		questions[index].completed = true;
 	}
 
