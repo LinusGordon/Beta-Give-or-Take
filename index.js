@@ -202,7 +202,7 @@ function userAnswering(sender, users, questions, original_message) {
 	total_questions_answered++;
 	
 	if(messageIsInappropriate(original_message)) {
-		sendTextMessage(sender, "Sorry. Please do not send links. \n \n Want to try again?");
+		sendTextMessage(sender, "Hmm... There was something wrong with your answer \n\n Select answer to try again");
 		return;
 	}
 	
