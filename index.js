@@ -80,6 +80,7 @@ app.post('/webhook/', function (req, res) {
 		   	} else if (event.message.quick_reply.payload == "ANSWER_PAYLOAD") {
 		    	giveUserQuestion(sender, users, questions)
 		    } 
+		    return;
 	    }
     	
     	// Find the current user
