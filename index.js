@@ -305,5 +305,6 @@ function messageIsInappropriate(text) {
 		if(re.test(text)) {
 			return true;
 		}
+	}
 	return false;
 } 
