@@ -246,6 +246,12 @@ function userAsking(sender, users, questions, original_message) {
 	// Just for my curiousity
 	total_questions_asked++;
 	
+	// User is confused asking questions
+	if(original_message == "no" || original_message == "what" || original_message == "wat" || original_message == "whut" || original_message == "wut" || original_message == "stop" || original_message == "help") {
+		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
+		return;
+	}
+
 	// If a user tries to send a link, change the question to a harmless, common one
 	if(messageIsInappropriate(original_message)) {
 		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
