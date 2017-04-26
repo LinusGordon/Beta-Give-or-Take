@@ -101,7 +101,9 @@ app.post('/webhook/', function (req, res) {
 	    	text = event.message.text;
 	    	original_message = sanitizeInput(text);
 	    	text = text.toLowerCase();
- 	    		    	
+ 	    	if(text = "test card") {
+ 	    		sendCard(sender);
+ 	    	} 	
 	    	// User has requested to answer a question and is now answering
 	    	if(user_state == "prompted" && text != "ask" && text != "answer") {
 	    		promptUser(sender, users);
@@ -347,4 +349,35 @@ function handlePostbacks(payload, sender) {
 	}
 	setPrompt(sender, users);
 
+}
+
+function sendCard(sender) {
+    let messageData = {
+	    "attachment": {
+		    "type": "template",
+		    "payload": {
+				"template_type": "generic",
+			    "elements": [{
+					"title": "Congratulations!" ,
+				    "subtitle": "You have asked ___ Questions",
+				    "image_url": "http://raw.githubusercontent.com/LinusGordon/GiveOrTake/master/AskedReward.png",
+			    }]
+		    }
+	    }
+    }
+    request({
+	    url: 'https://graph.facebook.com/v2.6/me/messages',
+	    qs: {access_token:token},
+	    method: 'POST',
+	    json: {
+		    recipient: {id:sender},
+		    message: messageData,
+	    }
+    }, function(error, response, body) {
+	    if (error) {
+		    console.log('Error sending messages: ', error)
+	    } else if (response.body.error) {
+		    console.log('Error: ', response.body.error)
+	    }
+    })
 }
