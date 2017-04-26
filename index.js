@@ -360,7 +360,7 @@ function sendCard(sender) {
 			    "elements": [{
 					"title": "Congratulations!" ,
 				    "subtitle": "You have asked ___ Questions",
-				    "image_url": "http://raw.githubusercontent.com/LinusGordon/GiveOrTake/master/AskedReward.png",
+				    "image_url": "https://raw.githubusercontent.com/LinusGordon/GiveOrTake/master/AskedReward.png",
 			    }]
 		    }
 	    }
