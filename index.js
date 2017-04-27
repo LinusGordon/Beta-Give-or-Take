@@ -15,17 +15,6 @@ var total_questions_asked = 0;
 var total_questions_answered = 0;
 var pg = require('pg');
 
-pg.defaults.ssl = true;
-pg.connect(process.env.DATABASE_URL, function(err, client) {
-  if (err) throw err;
-  console.log('Connected to postgres! Getting schemas...');
-
-  client
-    .query('SELECT table_schema,table_name FROM information_schema.tables;')
-    .on('row', function(row) {
-      console.log(JSON.stringify(row));
-    });
-});
  
 // NOTE ABOUT THE FOLLOWING FUNCTION:
 // - I am using a free heroku app, which 'sleeps' every hour if it is not pinged
