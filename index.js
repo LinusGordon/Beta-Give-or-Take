@@ -60,7 +60,7 @@ query.on('row', function(row) {
 });
 query.on('end', function() {
 	client.end();
-});
+});   
 
 app.set('port', (process.env.PORT || 5000));
 
