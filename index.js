@@ -1,19 +1,4 @@
 
-
-// 'use strict'
-
-// const express = require('express');
-// const bodyParser = require('body-parser');
-// const request = require('request');
-// const app = express();
-// const token = process.env.token;
-// var http = require("http");
-// var total_usage = 0;
-// var total_sent_received = 0; 
-// var total_users = 169; // This is the number of users from my last version
-// var total_questions_asked = 0;
-// var total_questions_answered = 0;
-// var pg = require('pg');
 'use strict'
 
 const express = require('express');
@@ -45,10 +30,17 @@ var users = [];
 var initialQuestions = ["How are you doing today?", "What makes you an interesting person?", "What is your current goal?", "What is your favorite type of cookie?", "What is your favorite TV show?", "Funniest thing that happened to you today?", "Where are you?", "What happens to us when we die?", "How old are you?", "Pancakes or waffles?", "What time is it for you?", "What should I eat for dinner?", "What is your middle name?", "Favorite band or musician?", "What is your favorite color?", "Funniest thing that happened to you this week?", "Best childhood memory?", "Would you rather be gossiped about or never talked about at all?", "Favorite school?", "Would you rather end hunger or hatred?", "Do you believe in parallel universes?", "Who is your favorite Disney character?", "Do you have a secret admirer?", "What is the craziest thing you did as a kid?", "What is your best memory from college?", "If there was a draft, would you dodge it?", "What is your favorite track and field event?", "What would make this chatbot better?", "Do you believe in aliens?", "What is the most attractive quality in a person?", "What's the grossest thing you've ever had to eat?", "Do you believe in luck?", "Who's the best rapper right now?", "What makes you happy?", "What's your biggest pet peeve?", "Who do you have a crush on?", "Would you recommend this bot to a friend? Why or why not?", "What could this bot do to improve?", "What sport would be the funniest to add a mandatory amount of alcohol to?", "What is today's date?", "What is 10 + 81?", "What is the funniest question you've been asked on Give or Take?", "How did you discover this bot?", "What is your personal mission statement?", "What are the top 2 compliments you hear from people about yourself?", "What came first, the chicken or the egg?", "How many licks does it take to get to the center of a tootsie pop?", "If animals could talk, which would be the rudest?", "What’s the most ridiculous fact you know?", "In one sentence, how would you sum up the internet?", "Is a hotdog a sandwich?", "If peanut butter wasn’t called peanut butter, what would it be called?", "What’s the best inside joke you’ve been a part of?", "Who is your role model?"];
 
 var pg = require('pg');
+const connectionString = process.env.DATABASE_URL;
+const client = new pg.Client(connectionString);
+client.connect();
+const query = client.query(
+  'CREATE TABLE questions(complete BOOLEAN, text VARCHAR(1000), asker VARCHAR(50), date DATE');
+query.on('end', () => { client.end(); });
+
 
 app.get('/db', function (request, response) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-    client.query('SELECT * FROM test_table', function(err, result) {
+    client.query('SELECT * FROM questions', function(err, result) {
       done();
       if (err)
        { console.error(err); response.send("Error " + err); }
