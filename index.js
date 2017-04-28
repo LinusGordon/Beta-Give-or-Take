@@ -32,10 +32,8 @@ var pg = require('pg');
 const connectionString = process.env.DATABASE_URL;
 const client = new pg.Client(connectionString);
 client.connect();
-const query = client.query(
-  'CREATE TABLE IF NOT EXISTS questions(complete BOOLEAN, text text, asker VARCHAR(50), date DATE)');
-	query.on('end', () => { client.end(); }
-);
+const query = client.query('CREATE TABLE IF NOT EXISTS questions(complete BOOLEAN, text text, asker VARCHAR(50), date DATE)');
+	  query.on('end', () => { client.end(); });
 
 
 app.get('/db', function (request, response) {
@@ -54,7 +52,8 @@ app.get('/db', function (request, response) {
 
 if (total_sent_received == 0) {
  	for (var i = 0; i < initialQuestions.length; i++) {
- 		client.query('INSERT INTO questions(complete, text, asker, date) VALUES (true, $1, null, null);', [initialQuestions[i]]; query.on('end', () => { client.end(); });
+ 		client.query('INSERT INTO questions(complete, text, asker, date) VALUES (true, $1, null, null);', [initialQuestions[i]]);
+ 		query.on('end', () => { client.end(); });
  	}
 
 }
