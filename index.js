@@ -55,7 +55,7 @@ app.get('/db', function (request, response) {
 
 if (total_sent_received == 0) {
  	for (var i = 0; i < initialQuestions.length; i++) {
- 		client.query('INSERT INTO questions (complete, text, asker, date) VALUES (true, ' + initialQuestions[i] + ', null, null);');
+ 		client.query("INSERT INTO questions (complete, text, asker, date) VALUES (true, " + initialQuestions[i] + ", null, null);");
  	}
 }
 
