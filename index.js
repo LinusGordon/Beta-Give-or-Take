@@ -50,11 +50,15 @@ app.get('/db', function (request, response) {
 });
 
 if (total_sent_received == 0) {
+
  	for (var i = 0; i < initialQuestions.length; i++) {
+ 		client.query('DROP TABLE questions');
+ 		client.query('CREATE TABLE IF NOT EXISTS questions(complete BOOLEAN, text text, asker VARCHAR(50), date DATE)');
  		client.query('INSERT INTO questions(complete, text, asker, date) VALUES (true, $1, null, null);', [initialQuestions[i]]);
  	}
 
 }
+
 
 
 app.set('port', (process.env.PORT || 5000));
