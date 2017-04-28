@@ -43,10 +43,12 @@ app.get('/db', function (request, response) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query('SELECT * FROM questions', function(err, result) {
       done();
-      if (err)
-       { console.error(err); response.send("Error " + err); }
-      else
-       { response.render(path.join(__dirname+'/index'), {results: result.rows} ); }
+      if (err) { 
+      		console.error(err); response.send("Error " + err); 
+  	  }
+      else { 
+      	response.send( {results: result.rows} ); 
+      }
     });
   });
 });
