@@ -46,7 +46,7 @@ app.get('/db', function (request, response) {
       if (err)
        { console.error(err); response.send("Error " + err); }
       else
-       { response.render(path.join(__dirname+'/index.html'), {results: result.rows} ); }
+       { response.render(path.join(__dirname+'/index'), {results: result.rows} ); }
     });
   });
 });
