@@ -23,7 +23,7 @@ setInterval(function() {
      http.get("http://rocky-inlet-35580.herokuapp.com");
 }, 900000); // 15 minutes
 
-var questions = [];
+//var questions = [];
 var users = [];
 
 
@@ -92,62 +92,62 @@ app.post('/webhook/', function (req, res) {
     	
     	let event = req.body.entry[0].messaging[i];
 	    let sender = event.sender.id;
-	    found = sender in users;
-	    if (!found) { // Keep track of total number of users
-	    	total_users++;
-	    }
+	    // found = sender in users;
+	    // if (!found) { // Keep track of total number of users
+	    // 	total_users++;
+	    // }
 
-	   	if (event.postback) { // handles menu clicks
-	   		handlePostbacks(event.postback.payload, sender);
-	   	}
+	   	// if (event.postback) { // handles menu clicks
+	   	// 	handlePostbacks(event.postback.payload, sender);
+	   	// }
 
 	   	if (event.message && event.message.attachments) { // If a user trys to send a link, attachment, or sticker
 	   		sendTextMessage(sender, "Sorry, I don't accept links, stickers, or attachments. \n \n Do you want to ask or answer a question?", true);
 			setPrompt(sender, users);
 	   	}
     	
-    	// Find the current user
-	    found = sender in users;
-	    if(found) {
-	    	user_state = users[sender].state;
-	    } else {
-	    	promptUser(sender, users);
-	    }
+    	// // Find the current user
+	    // found = sender in users;
+	    // if(found) {
+	    // 	user_state = users[sender].state;
+	    // } else {
+	    // 	promptUser(sender, users);
+	    // }
 	    
-	    if(event.message && event.message.text && found) { // If the user sends a message
+	  //   if(event.message && event.message.text && found) { // If the user sends a message
 			
-			usageInfo();
+			// usageInfo();
 
-	    	text = event.message.text;
-	    	original_message = sanitizeInput(text);
-	    	text = text.toLowerCase();
+	  //   	text = event.message.text;
+	  //   	original_message = sanitizeInput(text);
+	  //   	text = text.toLowerCase();
  	    	
- 	    	if(text = "test card") {
-  	    		sendCard(sender);
-  	    	} 	    	
-	    	// User has requested to answer a question and is now answering
-	    	if(user_state == "prompted" && text != "ask" && text != "answer") {
-	    		promptUser(sender, users);
-	    	}
-	    	else if (user_state == "answering") {
-	    		userAnswering(sender, users, questions, original_message);
-	    	}  
-	    	// User has requested to ask a question and is now asking
-	    	else if (user_state == "asking") {
-	    		userAsking(sender, users, questions, original_message);
-	    	} 
-	    	// User has typed 'ask' or some variation of that
-	    	else if (text.includes("ask") && user_state == "prompted"){
-	    	 	userWantsToAsk(sender, users);
-	    	} 
-	    	// User wants to answer
-		    else if (found && text.includes("answer") && user_state == "prompted") {
-	    		giveUserQuestion(sender, users, questions);
-	    	} 
-	    	else if (found) {
-	    		promptUser(sender, users);
-	    	}
-	    }
+ 	 //    	if(text = "test card") {
+  	//     		sendCard(sender);
+  	//     	} 	    	
+	  //   	// User has requested to answer a question and is now answering
+	  //   	if(user_state == "prompted" && text != "ask" && text != "answer") {
+	  //   		promptUser(sender, users);
+	  //   	}
+	  //   	else if (user_state == "answering") {
+	  //   		userAnswering(sender, users, questions, original_message);
+	  //   	}  
+	  //   	// User has requested to ask a question and is now asking
+	  //   	else if (user_state == "asking") {
+	  //   		userAsking(sender, users, questions, original_message);
+	  //   	} 
+	  //   	// User has typed 'ask' or some variation of that
+	  //   	else if (text.includes("ask") && user_state == "prompted"){
+	  //   	 	userWantsToAsk(sender, users);
+	  //   	} 
+	  //   	// User wants to answer
+		 //    else if (found && text.includes("answer") && user_state == "prompted") {
+	  //   		giveUserQuestion(sender, users, questions);
+	  //   	} 
+	  //   	else if (found) {
+	  //   		promptUser(sender, users);
+	  //   	}
+	  //   }
     }
     res.sendStatus(200)
 });
@@ -193,211 +193,211 @@ function promptUser(sender, users) {
 }
 
 
-//Gives the user a question to answer
-function giveUserQuestion(sender, users, questions) {
-	// If there are no questions waiting to be answered
-	if (!questions[0]) {
-		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Ask.", true);
-	} else { // If there is a question 
-		var index;
-		for (index = 0; index < questions.length; index++) {
-			if (questions[index].asker != sender) {
-		 		break;
-			} 
-		}
-		if (questions[index] == null || questions[index].question == null) {
-	 		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Ask.", true);
-		} else {
-			var question = questions[index].question;
-			users[sender].state = "answering";
-			questions[index].answerer = sender;
-			sendTextMessage(sender, "Please answer the following question.\n\n" + question, false);
-		}
-	}
-}
+// //Gives the user a question to answer
+// function giveUserQuestion(sender, users, questions) {
+// 	// If there are no questions waiting to be answered
+// 	if (!questions[0]) {
+// 		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Ask.", true);
+// 	} else { // If there is a question 
+// 		var index;
+// 		for (index = 0; index < questions.length; index++) {
+// 			if (questions[index].asker != sender) {
+// 		 		break;
+// 			} 
+// 		}
+// 		if (questions[index] == null || questions[index].question == null) {
+// 	 		sendTextMessage(sender, "There are no more questions right now. Sorry! \n \n Why don't you try to ask a question? To do so, select Ask.", true);
+// 		} else {
+// 			var question = questions[index].question;
+// 			users[sender].state = "answering";
+// 			questions[index].answerer = sender;
+// 			sendTextMessage(sender, "Please answer the following question.\n\n" + question, false);
+// 		}
+// 	}
+// }
 
-// Handles when a user answers a question
-function userAnswering(sender, users, questions, original_message) {
+// // Handles when a user answers a question
+// function userAnswering(sender, users, questions, original_message) {
 	
-	total_questions_answered++;
+// 	total_questions_answered++;
 	
-	if (messageIsInappropriate(original_message)) {
-		sendTextMessage(sender, "Hmm... There was something wrong with your answer \n\n Let's try that again", true);
-		setPrompt(sender, users);
-		return;
-	}
+// 	if (messageIsInappropriate(original_message)) {
+// 		sendTextMessage(sender, "Hmm... There was something wrong with your answer \n\n Let's try that again", true);
+// 		setPrompt(sender, users);
+// 		return;
+// 	}
 	
-	var index;
+// 	var index;
 
-	for (index = 0; index < questions.length; index++) {
-		if (questions[index].answerer == sender) {
-			// Without a subscription, the bot will get banned if it messages users after 24 hours
-			// of interaction. If we find a question that is 24 hours old, it must be removed.
-			var cur_date = new Date();
-			var question_date = questions[index].date;
-			if ((Math.abs(cur_date - question_date) / 36e5) >= 23.5) { // 36e5 helps convert milliseconds to hours
-				questions.splice(index, 1); // remove the question
-				continue;
-			} else {
-				break;
-			}
-		}
-	}
-	// Send message to the asker with an answer
-	// It would equal null if it is a repeat question. 
-	if (questions[index] && questions[index].completed == false) {
-		sendTextMessage(questions[index].asker, "You asked: " + questions[index].question + "\n \nThe answer is: " + original_message, true);
-		questions[index].completed = true;
-	}
+// 	for (index = 0; index < questions.length; index++) {
+// 		if (questions[index].answerer == sender) {
+// 			// Without a subscription, the bot will get banned if it messages users after 24 hours
+// 			// of interaction. If we find a question that is 24 hours old, it must be removed.
+// 			var cur_date = new Date();
+// 			var question_date = questions[index].date;
+// 			if ((Math.abs(cur_date - question_date) / 36e5) >= 23.5) { // 36e5 helps convert milliseconds to hours
+// 				questions.splice(index, 1); // remove the question
+// 				continue;
+// 			} else {
+// 				break;
+// 			}
+// 		}
+// 	}
+// 	// Send message to the asker with an answer
+// 	// It would equal null if it is a repeat question. 
+// 	if (questions[index] && questions[index].completed == false) {
+// 		sendTextMessage(questions[index].asker, "You asked: " + questions[index].question + "\n \nThe answer is: " + original_message, true);
+// 		questions[index].completed = true;
+// 	}
 
-	sendTextMessage(sender, "Thanks, I will send your answer to the asker. \n\nIn the meantime, do you want to ask or answer another question?", true);
-	setPrompt(sender, users);
+// 	sendTextMessage(sender, "Thanks, I will send your answer to the asker. \n\nIn the meantime, do you want to ask or answer another question?", true);
+// 	setPrompt(sender, users);
 
-	var popped_question = questions.splice(index, 1); // Remove question from the array
-	popped_question[0].answerer = null;
-	questions.push(popped_question[0]);
+// 	var popped_question = questions.splice(index, 1); // Remove question from the array
+// 	popped_question[0].answerer = null;
+// 	questions.push(popped_question[0]);
 
-}
+// }
 
-// Handles when a user wants to ask a question
-function userWantsToAsk(sender, users) {
-	sendTextMessage(sender, "Please ask your question.", false);
-	users[sender].state = "asking";
-}
+// // Handles when a user wants to ask a question
+// function userWantsToAsk(sender, users) {
+// 	sendTextMessage(sender, "Please ask your question.", false);
+// 	users[sender].state = "asking";
+// }
 
-// handles when a user asks a question
-function userAsking(sender, users, questions, original_message) {
+// // handles when a user asks a question
+// function userAsking(sender, users, questions, original_message) {
 	
-	setPrompt(sender, users);
+// 	setPrompt(sender, users);
 
-	total_questions_asked++;
+// 	total_questions_asked++;
 
-	for (var i = original_message.length - 1; i > 0; i--) {
-		if (original_message[i] == "?") {
-			original_message = original_message.substring(0, original_message.length - 1);
-		}
-	}
+// 	for (var i = original_message.length - 1; i > 0; i--) {
+// 		if (original_message[i] == "?") {
+// 			original_message = original_message.substring(0, original_message.length - 1);
+// 		}
+// 	}
 
-	// User is confused asking questions
-	if (original_message == "no" || original_message == "what" || original_message == "wat" || original_message == "whut" || original_message == "wut" || original_message == "stop" || original_message == "help" || original_message == "huh") {
-		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
-		setPrompt(sender, users);
-		return;
-	}
+// 	// User is confused asking questions
+// 	if (original_message == "no" || original_message == "what" || original_message == "wat" || original_message == "whut" || original_message == "wut" || original_message == "stop" || original_message == "help" || original_message == "huh") {
+// 		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
+// 		setPrompt(sender, users);
+// 		return;
+// 	}
 
-	// If a user tries to send a link, change the question to a harmless, common one
-	if (messageIsInappropriate(original_message)) {
-		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
-		setPrompt(sender, users);
-		return;
-	}
-	var cur_date = new Date();
+// 	// If a user tries to send a link, change the question to a harmless, common one
+// 	if (messageIsInappropriate(original_message)) {
+// 		sendTextMessage(sender, "Hmmm... Maybe ask something else. \n \n Do you want to try again?", true);
+// 		setPrompt(sender, users);
+// 		return;
+// 	}
+// 	var cur_date = new Date();
 	
-	if (original_message.slice(-1) != '?') {
-		original_message = original_message + "?"; 
-	}
-	if (sender in users) {
-		questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
-		sendTextMessage(sender, "Thanks, I will get back to you shortly. \n\nIn the meantime, do you want to ask or answer another question?", true);
-		setPrompt(sender, users);
-	}
-}
+// 	if (original_message.slice(-1) != '?') {
+// 		original_message = original_message + "?"; 
+// 	}
+// 	if (sender in users) {
+// 		questions.unshift({question: original_message, asker: sender, answerer: null, date: cur_date, completed: false});
+// 		sendTextMessage(sender, "Thanks, I will get back to you shortly. \n\nIn the meantime, do you want to ask or answer another question?", true);
+// 		setPrompt(sender, users);
+// 	}
+// }
 
 function setPrompt(sender, users) {
 	users[sender] = {answerer: null, state: "prompted"};
 }
 
-// Keep track of total questions asked and answered
-function usageInfo() {
-	total_usage++;
-	console.log("Total Usage = +" + total_usage);
-	console.log("Questions Asked = " + total_questions_asked);
-	console.log("Questions Answered = " + total_questions_answered);  
+// // Keep track of total questions asked and answered
+// function usageInfo() {
+// 	total_usage++;
+// 	console.log("Total Usage = +" + total_usage);
+// 	console.log("Questions Asked = " + total_questions_asked);
+// 	console.log("Questions Answered = " + total_questions_answered);  
 	
-}
+// }
 
-function sanitizeInput(text) {
-	text = text.replace(/[*{}><]/g,""); // Sanitize string 
-	return text;
-}
+// function sanitizeInput(text) {
+// 	text = text.replace(/[*{}><]/g,""); // Sanitize string 
+// 	return text;
+// }
 
-function messageIsInappropriate(text) {
+// function messageIsInappropriate(text) {
 	
-	// Restrict length a little bit
-	if (text.length > 1000) {
-		return true
-	}
-	// User might be trying to send a link
-	if (text.includes(".com") || text.includes("www") || text.includes(".co") || text.includes("https://") || text.includes("http://")) {
-			return true;
-	}
-	// User might be trying to send an e-mail
-	// This regex was found on http://stackoverflow.com/questions/16424659/check-if-a-string-contains-an-email-address
-	var re = /(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
-	if (re.test(text)) {
-		return true;
-	}
-	text = text.toLowerCase();
-	if (text.includes("@") && (text.includes("gmail") || text.includes("@hotmail") || text.includes("@yahoo") || text.includes(".edu"))) {
-		return true;
-	}
-	// Detect user errors
-	if (text == "answer" || text == "answr" || text == "ask" || text == "aswer" || text == "skip" || text == "pass") {
-		return true;
-	}
-	// User is trying to send a phone number if true
-	// This regex was found on http://stackoverflow.com/questions/16699007/regular-expression-to-match-standard-10-digit-phone-number
-	re = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
-	for(var i = 0; i < text.length; i++) {
-		var possiblePhoneNumber = text.substring(i, i + 12); // pull out 12 characters for a 10 digit number with possible punctuation
-		if (re.test(possiblePhoneNumber)) {
-			return true;
-		}
-	}
-	return false;
-} 
+// 	// Restrict length a little bit
+// 	if (text.length > 1000) {
+// 		return true
+// 	}
+// 	// User might be trying to send a link
+// 	if (text.includes(".com") || text.includes("www") || text.includes(".co") || text.includes("https://") || text.includes("http://")) {
+// 			return true;
+// 	}
+// 	// User might be trying to send an e-mail
+// 	// This regex was found on http://stackoverflow.com/questions/16424659/check-if-a-string-contains-an-email-address
+// 	var re = /(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
+// 	if (re.test(text)) {
+// 		return true;
+// 	}
+// 	text = text.toLowerCase();
+// 	if (text.includes("@") && (text.includes("gmail") || text.includes("@hotmail") || text.includes("@yahoo") || text.includes(".edu"))) {
+// 		return true;
+// 	}
+// 	// Detect user errors
+// 	if (text == "answer" || text == "answr" || text == "ask" || text == "aswer" || text == "skip" || text == "pass") {
+// 		return true;
+// 	}
+// 	// User is trying to send a phone number if true
+// 	// This regex was found on http://stackoverflow.com/questions/16699007/regular-expression-to-match-standard-10-digit-phone-number
+// 	re = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+// 	for(var i = 0; i < text.length; i++) {
+// 		var possiblePhoneNumber = text.substring(i, i + 12); // pull out 12 characters for a 10 digit number with possible punctuation
+// 		if (re.test(possiblePhoneNumber)) {
+// 			return true;
+// 		}
+// 	}
+// 	return false;
+// } 
 
-function handlePostbacks(payload, sender) {
+// function handlePostbacks(payload, sender) {
 	
-	if (payload == "GET_STARTED_PAYLOAD") {
-	    sendTextMessage(sender, "Welcome! I will help you ask and answer questions with anyone around the world. How does that sound? :)", false);
-	} else if (payload == "ABOUT_PAYLOAD") {
-		sendTextMessage(sender, "Give or Take was developed by Linus Gordon starting April 19, 2017. The bot has been featured on the front page of Botlist, Qwazou, and more.\n\nFor questions, comments, or feedback, please post on http://www.facebook.com/GiveOrTakeChatbot", false);
-	} else if (payload == "STATS_PAYLOAD") {
-		sendTextMessage(sender, "The current version of Give or Take has:\n" + total_users + " users\n" + total_questions_asked + " Questions Asked\n" + total_questions_answered + " Answers Provided\n" + total_sent_received + " Messages Sent and Received", false);
-	} else if (payload == "HELP_PAYLOAD") {
-		sendTextMessage(sender, "Give or Take allows you to ask to ask and answer unfiltered questions with anyone on Facebook.\nIf you ask a question, I will reply with another user's answer. \nYou can also choose to answer other user's questions.", false);
-	}
-	setPrompt(sender, users);
+// 	if (payload == "GET_STARTED_PAYLOAD") {
+// 	    sendTextMessage(sender, "Welcome! I will help you ask and answer questions with anyone around the world. How does that sound? :)", false);
+// 	} else if (payload == "ABOUT_PAYLOAD") {
+// 		sendTextMessage(sender, "Give or Take was developed by Linus Gordon starting April 19, 2017. The bot has been featured on the front page of Botlist, Qwazou, and more.\n\nFor questions, comments, or feedback, please post on http://www.facebook.com/GiveOrTakeChatbot", false);
+// 	} else if (payload == "STATS_PAYLOAD") {
+// 		sendTextMessage(sender, "The current version of Give or Take has:\n" + total_users + " users\n" + total_questions_asked + " Questions Asked\n" + total_questions_answered + " Answers Provided\n" + total_sent_received + " Messages Sent and Received", false);
+// 	} else if (payload == "HELP_PAYLOAD") {
+// 		sendTextMessage(sender, "Give or Take allows you to ask to ask and answer unfiltered questions with anyone on Facebook.\nIf you ask a question, I will reply with another user's answer. \nYou can also choose to answer other user's questions.", false);
+// 	}
+// 	setPrompt(sender, users);
 
-}
-function sendCard(sender) {
-    let messageData = {
-	    "attachment": {
-		    "type": "template",
-		    "payload": {
-				"template_type": "generic",
-			    "elements": [{
-					"title": "Congratulations!" ,
-				    "subtitle": "You have asked ___ Questions",
-				    "image_url": "https://github.com/LinusGordon/Beta-Give-or-Take/blob/master/AnsweredReward.png",
-			    }]
-		    }
-	    }
-    }
-    request({
-	    url: 'https://graph.facebook.com/v2.6/me/messages',
-	    qs: {access_token:token},
-	    method: 'POST',
-	    json: {
-		    recipient: {id:sender},
-		    message: messageData,
-	    }
-    }, function(error, response, body) {
-	    if (error) {
-		    console.log('Error sending messages: ', error);
-	    } else if (response.body.error) {
-		    console.log('Error: ', response.body.error);
-	    }
-    });
-}
+// }
+// function sendCard(sender) {
+//     let messageData = {
+// 	    "attachment": {
+// 		    "type": "template",
+// 		    "payload": {
+// 				"template_type": "generic",
+// 			    "elements": [{
+// 					"title": "Congratulations!" ,
+// 				    "subtitle": "You have asked ___ Questions",
+// 				    "image_url": "https://github.com/LinusGordon/Beta-Give-or-Take/blob/master/AnsweredReward.png",
+// 			    }]
+// 		    }
+// 	    }
+//     }
+//     request({
+// 	    url: 'https://graph.facebook.com/v2.6/me/messages',
+// 	    qs: {access_token:token},
+// 	    method: 'POST',
+// 	    json: {
+// 		    recipient: {id:sender},
+// 		    message: messageData,
+// 	    }
+//     }, function(error, response, body) {
+// 	    if (error) {
+// 		    console.log('Error sending messages: ', error);
+// 	    } else if (response.body.error) {
+// 		    console.log('Error: ', response.body.error);
+// 	    }
+//     });
+// }
