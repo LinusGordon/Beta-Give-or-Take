@@ -34,7 +34,7 @@ const connectionString = process.env.DATABASE_URL;
 const client = new pg.Client(connectionString);
 client.connect();
 const query = client.query(
-  'CREATE TABLE questions(complete BOOLEAN, text VARCHAR(1000), asker VARCHAR(50), date DATE)');
+  'CREATE TABLE IF NOT EXISTS questions(complete BOOLEAN, text VARCHAR(1000), asker VARCHAR(50), date DATE)');
 query.on('end', () => { client.end(); });
 
 
