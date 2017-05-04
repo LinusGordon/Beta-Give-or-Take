@@ -134,11 +134,11 @@ app.post('/webhook/', function (req, res) {
 	    		promptUser(sender, users);
 	    	}
 	    	else if (user_state == "answering") {
-	    		userAnswering(sender, users, questions, original_message);
+	    		userAnswering(sender, users, original_message);
 	    	}  
 	    	// User has requested to ask a question and is now asking
 	    	else if (user_state == "asking") {
-	    		userAsking(sender, users, questions, original_message);
+	    		userAsking(sender, users, original_message);
 	    	} 
 	    	// User has typed 'ask' or some variation of that
 	    	else if (text.includes("ask") && user_state == "prompted"){
@@ -146,7 +146,7 @@ app.post('/webhook/', function (req, res) {
 	    	} 
 	    	// User wants to answer
 		    else if (found && text.includes("answer") && user_state == "prompted") {
-	    		giveUserQuestion(sender, users, questions);
+	    		giveUserQuestion(sender, users);
 	    	} 
 	    	else if (found) {
 	    		promptUser(sender, users);
@@ -211,7 +211,7 @@ function giveUserQuestion(sender, users, questions) {
 }
 
 // Handles when a user answers a question
-function userAnswering(sender, users, questions, original_message) {
+function userAnswering(sender, users, original_message) {
 	
 	total_questions_answered++;
 	
@@ -260,7 +260,7 @@ function userWantsToAsk(sender, users) {
 }
 
 // handles when a user asks a question
-function userAsking(sender, users, questions, original_message) {
+function userAsking(sender, users, original_message) {
 	
 	setPrompt(sender, users);
 
