@@ -53,7 +53,7 @@ if (total_sent_received == 0) {
 	client.query('DROP TABLE questions'); // Delete the table
  	client.query('CREATE TABLE IF NOT EXISTS questions(complete BOOLEAN, text text, asker VARCHAR(50), date DATE)'); // Create the table
  	for (var i = 0; i < initialQuestions.length; i++) {
- 		client.query('INSERT INTO questions(complete, text, asker, date) VALUES (true, $1, null, null);', [initialQuestions[i]]); // Add questions
+ 		client.query("INSERT INTO questions(complete, text, asker, date) VALUES ('false', $1, null, null);", [initialQuestions[i]]); // Add questions
  	}
 
 }
@@ -199,7 +199,7 @@ function promptUser(sender, users) {
 
 //Gives the user a question to answer
 function giveUserQuestion(sender, users, questions) {
-	 var question = client.query('SELECT top 1 * FROM questions WHERE completed = false AND NOT asker = ' + sender + ' ORDER BY date desc'); // Create the table
+	 var question = client.query("SELECT top 1 * FROM questions WHERE completed='false' AND NOT asker='" + sender + "' ORDER BY date desc"); // Create the table
 	 console.log(question);
 	// If there are no questions waiting to be answered
 	if (question == null) {
