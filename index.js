@@ -199,7 +199,7 @@ function promptUser(sender, users) {
 
 //Gives the user a question to answer
 function giveUserQuestion(sender, users, questions) {
-	 var question = client.query('SELECT top 1 * FROM questions where completed = false AND asker != ' + sender + ' ORDER BY date desc'); // Create the table
+	 var question = client.query('SELECT top 1 * FROM questions WHERE completed = false AND NOT asker = ' + sender + ' ORDER BY date desc'); // Create the table
 	 console.log(question);
 	// If there are no questions waiting to be answered
 	if (question == null) {
