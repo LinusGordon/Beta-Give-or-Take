@@ -126,7 +126,7 @@ app.post('/webhook/', function (req, res) {
 	    	original_message = sanitizeInput(text);
 	    	text = text.toLowerCase();
  	    	
- 	    	if(text = "test card") {
+ 	    	if(text == "test card") {
   	    		sendCard(sender);
   	    	} 	    	
 	    	// User has requested to answer a question and is now answering
